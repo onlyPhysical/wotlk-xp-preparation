@@ -1,0 +1,71 @@
+:root {
+/* CSS HEX */
+/* --rich-black-fogra-39: #0a0908ff;
+--gunmetal: #22333bff;
+--almond: #eae0d5ff;
+--khaki-web: #c6ac8fff;
+--umber: #5e503fff; */
+
+/* CSS HSL */
+--rich-black: hsla(30, 11%, 4%, 1);
+--gunmetal: hsla(199, 27%, 18%, 1);
+--almond: hsla(31, 33%, 88%, 1);
+--khaki-web: hsla(32, 33%, 67%, 1);
+--umber: hsla(33, 20%, 31%, 1);
+
+/* SCSS Gradient */
+/* $gradient-top: linear-gradient(0deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
+$gradient-right: linear-gradient(90deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
+$gradient-bottom: linear-gradient(180deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
+$gradient-left: linear-gradient(270deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
+$gradient-top-right: linear-gradient(45deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
+$gradient-bottom-right: linear-gradient(135deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
+$gradient-top-left: linear-gradient(225deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
+$gradient-bottom-left: linear-gradient(315deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
+$gradient-radial: radial-gradient(#0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff); */
+}
+
+/* semantic color variables for this project */
+:root {
+  --color-background: var(--rich-black);
+  --color-background-2: var(--gunmetal);
+
+  --color-heading: var(--khaki-web);
+
+  --color-text: var(--almond);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: var(--rich-black);
+    --color-background-2: var(--gunmetal);
+  
+    --color-heading: var(--khaki-web);
+
+    --color-text: var(--almond);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
+  font-weight: normal;
+  list-style: none;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-background);
+  /* transition: color 0.5s, background-color 0.5s; */
+  line-height: 1.6;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, Lato, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
