@@ -48,7 +48,7 @@ interface Quest {
 const props = defineProps<{
   xp: Xp;
   quest: Quest;
-  disableQuest: string[];
+  // disableQuest: string[];
 }>();
 const emit = defineEmits<{
   (e: 'change', questId: string, questXp: number, checked: boolean, chainedQuestList: string[]): void;
@@ -240,13 +240,13 @@ const getQuestZoneReturn: ComputedRef<string> = computed(() => {
   return '';
 });
 const getQuestChain: ComputedRef<boolean> = computed(() => (props.quest.exclusiveTo || props.quest.preQuestSingle || props.quest.nextQuestInChain || props.quest.preQuestGroup) ? true : false);
-const getDisableQuest: ComputedRef<boolean> = computed(() => props.disableQuest.includes(props.xp.id));
+// const getDisableQuest: ComputedRef<boolean> = computed(() => props.disableQuest.includes(props.xp.id));
 
-watch(props, (newProps) => {
-  if (newProps.disableQuest.includes(props.xp.id)) {
-    checked.value = false;
-  }
-});
+// watch(props, (newProps) => {
+//   if (newProps.disableQuest.includes(props.xp.id)) {
+//     checked.value = false;
+//   }
+// });
 
 const getPreQuestSingle = (quest: string) => {
   if (questList[quest as keyof object]['preQuestSingle']) {
@@ -309,7 +309,8 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
 
 </script>
 <template>
-  <li :class="{'quest-row-disable': getDisableQuest}" class="quest-row">
+  <!-- <li :class="{'quest-row-disable': getDisableQuest}" class="quest-row"> -->
+  <li class="quest-row">
     <div class="quest-first-row">
       <input 
         v-model="checked" 

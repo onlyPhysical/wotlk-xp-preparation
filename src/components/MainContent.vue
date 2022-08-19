@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import xpList from "../../public/data/xpData.json";
 import questList from "../../public/data/questData.json";
+import questItemList from "../../public/data/questItemData.json";
 import { ref, computed, watch, onMounted } from "vue";
 import type { Ref, ComputedRef } from "vue";
 
@@ -60,7 +61,7 @@ const xpListResult: Ref<Xp[]> = ref(xpList);
 const questListResult = ref(JSON.parse(JSON.stringify(questList)));
 const questListSelected: Ref<Array<{ id: string, xp: number }>> = ref([]);
 const questListSelectedXp = ref(0);
-const disableQuestList: Ref<string[]> = ref([]);
+const disableChainQuestList: Ref<string[]> = ref([]);
 
 const showMoreQuestButton: ComputedRef<boolean> = computed(() => (xpListTotal.value > questListNumber.value) && !hasSearchResult.value);
 
@@ -116,17 +117,20 @@ const addQuest = (questId: string, questXp: number, checked: boolean, chainedQue
       xp: questXp
     };
     questListSelected.value = [...questListSelected.value, quest];
-    questListSelectedXp.value = questListSelectedXp.value + questXp;
+    // questListSelectedXp.value = questListSelectedXp.value + questXp; TODO better handling of xp accumulation
+    console.warn('questListSelected', questListSelected.value);
     if (chainedQuestList.length) {
-      disableQuestList.value = [...disableQuestList.value, ...chainedQuestList]
+      questListSelected.value = questListSelected.value
+        .filter((key) => !chainedQuestList.includes(key.id));
+      disableChainQuestList.value = [...disableChainQuestList.value, ...chainedQuestList]
         .filter((val, index, self) => self.indexOf(val) === index)
         .filter(val => val !== questId);
     }
   } else {
     questListSelected.value = questListSelected.value.filter((key) => key.id !== questId);
-    questListSelectedXp.value = questListSelectedXp.value - questXp;
-    disableQuestList.value = disableQuestList.value.filter(val => !chainedQuestList.includes(val));
-    console.warn('not checked disableQuestList.value', disableQuestList.value);
+    // questListSelectedXp.value = questListSelectedXp.value - questXp; TODO better handling of xp accumulation
+    disableChainQuestList.value = disableChainQuestList.value.filter(val => !chainedQuestList.includes(val));
+    console.warn('not checked disableChainQuestList.value', disableChainQuestList.value);
   }
 };
 </script>
@@ -144,7 +148,7 @@ const addQuest = (questId: string, questXp: number, checked: boolean, chainedQue
         v-for="xp in xpListResult.slice(0, questListNumber)"
         :xp="xp"
         :quest="questList[xp.id as keyof object]"
-        :disableQuest="disableQuestList"
+        :disableQuest="disableChainQuestList"
         :key="xp.id" />
     </ul>
     <button v-if="showMoreQuestButton" @click="showMoreQuest()">Show {{ QUEST_LIST_STEP }} more quest of {{ (xpListTotal - questListNumber) }}</button>
