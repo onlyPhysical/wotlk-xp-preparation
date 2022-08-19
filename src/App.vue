@@ -2,7 +2,8 @@
 import { ref, computed } from "vue";
 import type { Ref, ComputedRef } from "vue";
 
-import MainContent from "./components/MainContent.vue";
+import QuestList from "./components/QuestList.vue";
+import QuestItemList from "./components/QuestItemList.vue";
 
 const faction = ref('');
 const repFaction = ref('');
@@ -71,7 +72,24 @@ const factionFilterLength: ComputedRef<boolean> = computed(() => factionFilter.f
       </div>
     </div>
   <main>
-    <MainContent v-if="factionFilterLength" :factionFilter="factionFilter" />
+      <div class="main-block">
+        <QuestList v-if="factionFilterLength" :factionFilter="factionFilter" />
+      </div>
+      <div class="main-block">
+        <QuestItemList v-if="factionFilterLength" :factionFilter="factionFilter" />
+      </div>
+      <!-- <div class="main-block">
+        {{ questListSelectedXp }}
+        <li v-for="selectedQuest in questListSelected">
+          <div>
+            <span>{{ selectedQuest.xp }}</span>
+            <a 
+              :href="`https://www.wowhead.com/wotlk/quest=${selectedQuest.id}`"
+              :data-wowhead="`quest=${selectedQuest.id}`"
+              target="_blank">{{ questList[selectedQuest.id as keyof object]['name'] }}</a>
+          </div>
+        </li>
+      </div> -->
   </main>
 </template>
 
