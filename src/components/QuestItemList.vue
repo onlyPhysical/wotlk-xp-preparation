@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import xpList from "../../public/data/xpData.json";
-// import xpItemList from "../../public/data/xpItemData.json";
-import questList from "../../public/data/questData.json";
+// import xpList from "../../public/data/xpData.json";
+import xpItemList from "../../public/data/xpItemData.json";
+// import questList from "../../public/data/questData.json";
 import questItemList from "../../public/data/questItemData.json";
 import { ref, computed, watch, onMounted } from "vue";
 import type { Ref, ComputedRef } from "vue";
@@ -52,19 +52,13 @@ const props = defineProps<{
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
 }>();
 
-const QUEST_LIST_STEP = 15;
-
 const searchQuestTerm = ref('');
-const hasSearchResult = ref(false);
-const questListNumber = ref(QUEST_LIST_STEP);
-const xpListTotal = ref(xpList.length);
-const xpListResult: Ref<Xp[]> = ref(xpList);
-const questListResult = ref(JSON.parse(JSON.stringify(questList)));
-const questListSelected: Ref<Array<{ id: string, xp: number }>> = ref([]);
-const questListSelectedXp = ref(0);
+const xpItemListTotal = ref(xpItemList.length);
+const xpItemListResult: Ref<Xp[]> = ref(xpItemList);
+const questItemListResult = ref(JSON.parse(JSON.stringify(questItemList)));
+const questItemListSelected: Ref<Array<{ id: string, xp: number }>> = ref([]);
+const questItemListSelectedXp = ref(0);
 const disableChainQuestList: Ref<string[]> = ref([]);
-
-const showMoreQuestButton: ComputedRef<boolean> = computed(() => (xpListTotal.value > questListNumber.value) && !hasSearchResult.value);
 
 onMounted(() => {
   xpListResultFilter();
@@ -72,44 +66,40 @@ onMounted(() => {
 
 watch(props, (newProps) => {
   if (newProps.factionFilter) {
-    questListResult.value = JSON.parse(JSON.stringify(questList));
+    questItemListResult.value = JSON.parse(JSON.stringify(questItemList));
     xpListResultFilter();
     // TODO when changing factions
   }
 });
 
 const xpListResultFilter = (): void => {
-  xpListResult.value = xpList;
-  xpListResult.value = xpListResult.value.filter(key => {
+  xpItemListResult.value = xpItemList;
+  xpItemListResult.value = xpItemListResult.value.filter(key => {
     const factionFilter = key.requiredRaces !== props.factionFilter.faction.value && key.requiredRepFaction !== props.factionFilter.repFaction.value;
     if (!factionFilter) {
-      delete questListResult.value[key.id as keyof object];
+      delete questItemListResult.value[key.id as keyof object];
     }
     return factionFilter;
   });
-  xpListTotal.value = xpListResult.value.length;
+  xpItemListTotal.value = xpItemListResult.value.length;
 }
 
 const searchQuest = (): void => {
   if (searchQuestTerm.value.length === 0) {
-    hasSearchResult.value = false;
     xpListResultFilter();
   }
   if (searchQuestTerm.value.length < 3) return;
-  const questListSearchResult = Object.entries(questListResult.value)
+  const questItemListSearchResult = Object.entries(questItemListResult.value)
     .filter((quest: [string, any]) => {
       const questNameLowerCase = quest[1]['name'].toLowerCase();
       const searchQuestTermLowerCase = searchQuestTerm.value.toLowerCase();
       return questNameLowerCase.includes(searchQuestTermLowerCase);
     });
-  if (questListSearchResult.length > 0) {
-    hasSearchResult.value = true;
-    const questListSearchResultKeys = Object.keys(Object.fromEntries(questListSearchResult));
-    xpListResult.value = xpList.filter((key) => questListSearchResultKeys.includes(key.id));
+  if (questItemListSearchResult.length > 0) {
+    const questItemListSearchResultKeys = Object.keys(Object.fromEntries(questItemListSearchResult));
+    xpItemListResult.value = xpItemList.filter((key) => questItemListSearchResultKeys.includes(key.id));
   }
 };
-
-const showMoreQuest = (): void => { questListNumber.value = questListNumber.value + QUEST_LIST_STEP };
 
 const addQuest = (questId: string, questXp: number, checked: boolean, chainedQuestList: string[]) => {
   if (checked) {
@@ -117,21 +107,19 @@ const addQuest = (questId: string, questXp: number, checked: boolean, chainedQue
       id: questId,
       xp: questXp
     };
-    questListSelected.value = [...questListSelected.value, quest];
+    questItemListSelected.value = [...questItemListSelected.value, quest];
     // questListSelectedXp.value = questListSelectedXp.value + questXp; TODO better handling of xp accumulation
-    console.warn('questListSelected', questListSelected.value);
     if (chainedQuestList.length) {
-      questListSelected.value = questListSelected.value
+      questItemListSelected.value = questItemListSelected.value
         .filter((key) => !chainedQuestList.includes(key.id));
       disableChainQuestList.value = [...disableChainQuestList.value, ...chainedQuestList]
         .filter((val, index, self) => self.indexOf(val) === index)
         .filter(val => val !== questId);
     }
   } else {
-    questListSelected.value = questListSelected.value.filter((key) => key.id !== questId);
+    questItemListSelected.value = questItemListSelected.value.filter((key) => key.id !== questId);
     // questListSelectedXp.value = questListSelectedXp.value - questXp; TODO better handling of xp accumulation
     disableChainQuestList.value = disableChainQuestList.value.filter(val => !chainedQuestList.includes(val));
-    console.warn('not checked disableChainQuestList.value', disableChainQuestList.value);
   }
 };
 </script>
@@ -145,11 +133,10 @@ const addQuest = (questId: string, questXp: number, checked: boolean, chainedQue
   <ul>
     <QuestItem
       @change="addQuest"
-      v-for="xp in xpListResult.slice(0, questListNumber)"
+      v-for="xp in xpItemList"
       :xp="xp"
       :quest="questItemList[xp.id as keyof object]"
       :disableQuest="disableChainQuestList"
       :key="xp.id" />
   </ul>
-  <button v-if="showMoreQuestButton" @click="showMoreQuest()">Show {{ QUEST_LIST_STEP }} more quest of {{ (xpListTotal - questListNumber) }}</button>
 </template>

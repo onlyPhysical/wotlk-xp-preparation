@@ -313,7 +313,7 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
   <li class="quest-row">
     <div class="quest-first-row">
       <input 
-        v-model="checked" 
+        v-model="checked"
         @change="checkQuest(xp.id, xp.xp, checked)" 
         type="checkbox">
       <span :class="getQuestDifficultyClass" class="quest-xp">{{ xp.xp }}</span>
