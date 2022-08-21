@@ -48,10 +48,10 @@ interface Quest {
 const props = defineProps<{
   xp: Xp;
   quest: Quest;
-  // disableQuest: string[];
+  chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalMarkQuest: Ref<string[]> };
 }>();
 const emit = defineEmits<{
-  (e: 'change', questId: string, questXp: number, checked: boolean, chainedQuestList: string[]): void;
+  (e: 'check', questId: string, questXp: number, checked: boolean, chainedQuestList: string[]): void;
 }>();
 
 const checkForCompetedMsg: Ref<string> = ref('Is completed');
@@ -231,7 +231,7 @@ const getQuestRequiredSkill: ComputedRef<string> = computed(() => {
   return '';
 });
 const getQuestRequiredLevel: ComputedRef<number> = computed(() => props.quest.requiredLevel);
-const getQuestZoneReturn: ComputedRef<string> = computed(() => {
+const getQuestReturnZone: ComputedRef<string> = computed(() => {
   if (props.quest.finishedBy!.creatureEnd) {
     return getZoneQuestFinishedBy('creatureEnd', 'npcZoneId', npcZoneList);
   } else if(props.quest.finishedBy!.objectEnd) {
@@ -240,13 +240,8 @@ const getQuestZoneReturn: ComputedRef<string> = computed(() => {
   return '';
 });
 const getQuestChain: ComputedRef<boolean> = computed(() => (props.quest.exclusiveTo || props.quest.preQuestSingle || props.quest.nextQuestInChain || props.quest.preQuestGroup) ? true : false);
-// const getDisableQuest: ComputedRef<boolean> = computed(() => props.disableQuest.includes(props.xp.id));
-
-// watch(props, (newProps) => {
-//   if (newProps.disableQuest.includes(props.xp.id)) {
-//     checked.value = false;
-//   }
-// });
+const getMarkQuest: ComputedRef<boolean> = computed(() => props.chainedGlobal.chainedGlobalMarkQuest.value.includes(props.xp.id));
+const getDisableQuest: ComputedRef<boolean> = computed(() => props.chainedGlobal.chainedGlobalQuestId.value === props.xp.id ? true : false);
 
 const getPreQuestSingle = (quest: string) => {
   if (questList[quest as keyof object]['preQuestSingle']) {
@@ -295,7 +290,7 @@ const checkQuest = (questId: string, questXp: number, checked: boolean): void =>
     getPreQuestGroup(questId);
     getExclusiveTo(questId);
   }
-  emit('change', questId, questXp, checked, chainedQuestList);
+  emit('check', questId, questXp, checked, chainedQuestList);
 }
 
 const checkForCompleted = async (event: Event, questId: string): Promise<void> => {
@@ -309,12 +304,12 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
 
 </script>
 <template>
-  <!-- <li :class="{'quest-row-disable': getDisableQuest}" class="quest-row"> -->
-  <li class="quest-row">
+  <li :class="{'quest-row-disable': getMarkQuest}" class="quest-row">
     <div class="quest-first-row">
       <input 
         v-model="checked"
-        @change="checkQuest(xp.id, xp.xp, checked)" 
+        @change="checkQuest(xp.id, xp.xp, checked)"
+        :disabled="getDisableQuest"
         type="checkbox">
       <span :class="getQuestDifficultyClass" class="quest-xp">{{ xp.xp }}</span>
       <a 
@@ -332,7 +327,7 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
         <span v-if="getQuestRequiredSkill" class="quest-skill-image"><img :src="`../../public/images/${getQuestRequiredSkill}.webp`"></span>
         <span v-if="getQuestChain" class="quest-chain-image"></span>
       </div>
-      <span class="quest-zone-return">{{ getQuestZoneReturn }}</span>
+      <span class="quest-zone-return">{{ getQuestReturnZone }}</span>
     </div>
   </li>
 </template>

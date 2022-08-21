@@ -11,6 +11,17 @@ const factionFilter: { faction: Ref<number>, repFaction: Ref<number> } = {
    faction: ref(0),
    repFaction: ref(0)
 };
+const chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalMarkQuest: Ref<string[]> } = {
+   chainedGlobalQuestId: ref(''),
+   chainedGlobalMarkQuest: ref([])
+};
+const chainedItemGlobal: { chainedGlobalQuestItemId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuestItem: Ref<string[]> } = {
+   chainedGlobalQuestItemId: ref(''),
+   chainedGlobalQuestChecked: ref(false),
+   chainedGlobalMarkQuestItem: ref([])
+};
+
+const factionFilterLength: ComputedRef<boolean> = computed(() => factionFilter.faction.value !== 0 && factionFilter.repFaction.value !== 0);
 
 const getFaction = (selectFaction: string) => {
   if (faction.value === selectFaction) return;
@@ -34,7 +45,16 @@ const getFaction = (selectFaction: string) => {
   }
 }
 
-const factionFilterLength: ComputedRef<boolean> = computed(() => factionFilter.faction.value !== 0 && factionFilter.repFaction.value !== 0);
+const addQuest = (questId: string, markQuest: string[]): void => {
+  chainedGlobal.chainedGlobalQuestId.value = questId;
+  chainedGlobal.chainedGlobalMarkQuest.value = markQuest;
+}
+
+const addQuestItem = (questId: string, checked: boolean, markQuest: string[]): void => {
+  chainedItemGlobal.chainedGlobalQuestItemId.value = questId;
+  chainedItemGlobal.chainedGlobalQuestChecked.value = checked;
+  chainedItemGlobal.chainedGlobalMarkQuestItem.value = markQuest;
+}
 </script>
 
 <template>
@@ -73,10 +93,18 @@ const factionFilterLength: ComputedRef<boolean> = computed(() => factionFilter.f
     </div>
   <main>
       <div class="main-block">
-        <QuestList v-if="factionFilterLength" :factionFilter="factionFilter" />
+        <QuestList 
+        v-if="factionFilterLength"
+        @check="addQuest"
+        :factionFilter="factionFilter"
+        :chainedItemGlobal="chainedItemGlobal" />
       </div>
       <div class="main-block">
-        <QuestItemList v-if="factionFilterLength" :factionFilter="factionFilter" />
+        <QuestItemList
+          v-if="factionFilterLength"
+          @check="addQuestItem"
+          :factionFilter="factionFilter"
+          :chainedGlobal="chainedGlobal" />
       </div>
       <!-- <div class="main-block">
         {{ questListSelectedXp }}

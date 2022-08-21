@@ -1,7 +1,5 @@
 <script setup lang="ts">
-// import xpList from "../../public/data/xpData.json";
 import xpItemList from "../../public/data/xpItemData.json";
-// import questList from "../../public/data/questData.json";
 import questItemList from "../../public/data/questItemData.json";
 import { ref, computed, watch, onMounted } from "vue";
 import type { Ref, ComputedRef } from "vue";
@@ -50,15 +48,17 @@ interface Quest {
 
 const props = defineProps<{
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
+  chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalMarkQuest: Ref<string[]> };
+}>();
+const emit = defineEmits<{
+  (e: 'check', questId: string, checked: boolean, markChainQuestItemList: string[]): void;
 }>();
 
 const searchQuestTerm = ref('');
-const xpItemListTotal = ref(xpItemList.length);
 const xpItemListResult: Ref<Xp[]> = ref(xpItemList);
 const questItemListResult = ref(JSON.parse(JSON.stringify(questItemList)));
 const questItemListSelected: Ref<Array<{ id: string, xp: number }>> = ref([]);
 const questItemListSelectedXp = ref(0);
-const disableChainQuestList: Ref<string[]> = ref([]);
 
 onMounted(() => {
   xpListResultFilter();
@@ -81,7 +81,6 @@ const xpListResultFilter = (): void => {
     }
     return factionFilter;
   });
-  xpItemListTotal.value = xpItemListResult.value.length;
 }
 
 const searchQuest = (): void => {
@@ -101,7 +100,7 @@ const searchQuest = (): void => {
   }
 };
 
-const addQuest = (questId: string, questXp: number, checked: boolean, chainedQuestList: string[]) => {
+const checkQuest = (questId: string, questXp: number, checked: boolean, chainedQuestList: string[]) => {
   if (checked) {
     const quest = {
       id: questId,
@@ -112,31 +111,29 @@ const addQuest = (questId: string, questXp: number, checked: boolean, chainedQue
     if (chainedQuestList.length) {
       questItemListSelected.value = questItemListSelected.value
         .filter((key) => !chainedQuestList.includes(key.id));
-      disableChainQuestList.value = [...disableChainQuestList.value, ...chainedQuestList]
-        .filter((val, index, self) => self.indexOf(val) === index)
-        .filter(val => val !== questId);
     }
   } else {
     questItemListSelected.value = questItemListSelected.value.filter((key) => key.id !== questId);
     // questListSelectedXp.value = questListSelectedXp.value - questXp; TODO better handling of xp accumulation
-    disableChainQuestList.value = disableChainQuestList.value.filter(val => !chainedQuestList.includes(val));
   }
+  console.warn(questId, 'questId', checked)
+  emit('check', questId, checked, chainedQuestList);
 };
 </script>
 
 <template>
-  <!-- <pre>{{ questList['10091'] }}</pre> -->
+  <!-- <pre>{{ questItemList['11041'] }}</pre> -->
   <div class="main-block-header">
     <h2>Quests</h2>
     <input v-model.trim="searchQuestTerm" @input="searchQuest()" class="search-quest" placeholder="Quest name">
   </div>
   <ul>
     <QuestItem
-      @change="addQuest"
-      v-for="xp in xpItemList"
+      @check="checkQuest"
+      v-for="xp in xpItemListResult"
       :xp="xp"
       :quest="questItemList[xp.id as keyof object]"
-      :disableQuest="disableChainQuestList"
+      :chainedGlobal="chainedGlobal"
       :key="xp.id" />
   </ul>
 </template>
