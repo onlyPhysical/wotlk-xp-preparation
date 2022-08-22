@@ -5,14 +5,16 @@ import type { Ref, ComputedRef } from "vue";
 import QuestList from "./components/QuestList.vue";
 import QuestItemList from "./components/QuestItemList.vue";
 
+const selectedQuestList: Ref<Array<{ questId: string, questXp: number, questName: string, zone: string }>> = ref([])
 const faction = ref('');
 const repFaction = ref('');
 const factionFilter: { faction: Ref<number>, repFaction: Ref<number> } = {
    faction: ref(0),
    repFaction: ref(0)
 };
-const chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalMarkQuest: Ref<string[]> } = {
+const chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuest: Ref<string[]> } = {
    chainedGlobalQuestId: ref(''),
+   chainedGlobalQuestChecked: ref(false),
    chainedGlobalMarkQuest: ref([])
 };
 const chainedItemGlobal: { chainedGlobalQuestItemId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuestItem: Ref<string[]> } = {
@@ -45,15 +47,26 @@ const getFaction = (selectFaction: string) => {
   }
 }
 
-const addQuest = (questId: string, markQuest: string[]): void => {
+const addQuest = (questId: string, questListSelected: { questId: string, questXp: number, questName: string, zone: string }, checked: boolean, markQuest: string[]): void => {
   chainedGlobal.chainedGlobalQuestId.value = questId;
+  chainedGlobal.chainedGlobalQuestChecked.value = checked;
   chainedGlobal.chainedGlobalMarkQuest.value = markQuest;
+  if (checked) {
+    selectedQuestList.value = [...selectedQuestList.value, questListSelected];
+  } else {
+    selectedQuestList.value = selectedQuestList.value.filter((key) => key.questId !== questId);
+  }
 }
 
-const addQuestItem = (questId: string, checked: boolean, markQuest: string[]): void => {
+const addQuestItem = (questId: string, questListSelected: { questId: string, questXp: number, questName: string, zone: string }, checked: boolean, markQuest: string[]): void => {
   chainedItemGlobal.chainedGlobalQuestItemId.value = questId;
   chainedItemGlobal.chainedGlobalQuestChecked.value = checked;
   chainedItemGlobal.chainedGlobalMarkQuestItem.value = markQuest;
+  if (checked) {
+    selectedQuestList.value = [...selectedQuestList.value, questListSelected];
+  } else {
+    selectedQuestList.value = selectedQuestList.value.filter((key) => key.questId !== questId);
+  }
 }
 </script>
 
@@ -106,18 +119,19 @@ const addQuestItem = (questId: string, checked: boolean, markQuest: string[]): v
           :factionFilter="factionFilter"
           :chainedGlobal="chainedGlobal" />
       </div>
-      <!-- <div class="main-block">
-        {{ questListSelectedXp }}
-        <li v-for="selectedQuest in questListSelected">
+      <div class="main-block">
+        <!-- {{ questListSelectedXp }} -->
+        <li v-for="selectedQuest in selectedQuestList">
           <div>
-            <span>{{ selectedQuest.xp }}</span>
+            <span>{{ selectedQuest.questXp }}</span>
             <a 
-              :href="`https://www.wowhead.com/wotlk/quest=${selectedQuest.id}`"
-              :data-wowhead="`quest=${selectedQuest.id}`"
-              target="_blank">{{ questList[selectedQuest.id as keyof object]['name'] }}</a>
+              :href="`https://www.wowhead.com/wotlk/quest=${selectedQuest.questId}`"
+              :data-wowhead="`quest=${selectedQuest.questId}`"
+              target="_blank">{{ selectedQuest.questName }}</a>
+            <span>{{ selectedQuest.zone }}</span>
           </div>
         </li>
-      </div> -->
+      </div>
   </main>
 </template>
 

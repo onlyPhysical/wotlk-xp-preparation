@@ -14,7 +14,7 @@ interface Xp {
 }
 
 interface Quest {
-  name: string | null;
+  name: string;
   startedBy: object | null;
   finishedBy: {
     creatureEnd: { npcZoneId: number } | null;
@@ -49,10 +49,10 @@ const props = defineProps<{
   xp: Xp;
   quest: Quest;
   markChainQuestList: string[];
-  disableQuestItem: { chainedGlobalQuestItemId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuestItem: Ref<string[]> };
+  disableQuestItemList: string[];
 }>();
 const emit = defineEmits<{
-  (e: 'check', questId: string, questXp: number, checked: boolean, chainedQuestList: string[]): void;
+  (e: 'check', questId: string, questXp: number, questName: string, zone: string, checked: boolean, chainedQuestList: string[]): void;
 }>();
 
 const checkForCompetedMsg: Ref<string> = ref('Is completed');
@@ -213,6 +213,13 @@ const zoneIDs: { [key: number]: string; } =  {
   7307: 'UPPER BLACKROCK SPIRE',
   3457: 'KARAZHAN'
 };
+
+watch(props, (newProps) => {
+  if (newProps.markChainQuestList.includes(props.xp.id)) {
+    checked.value = false;
+  }
+});
+
 const getQuestDifficultyClass: ComputedRef<string> = computed(() => {
   if (props.xp.xp >= 20000) {
     return 'quest-xp-orange';
@@ -242,19 +249,7 @@ const getQuestReturnZone: ComputedRef<string> = computed(() => {
 });
 const getQuestChain: ComputedRef<boolean> = computed(() => (props.quest.exclusiveTo || props.quest.preQuestSingle || props.quest.nextQuestInChain || props.quest.preQuestGroup) ? true : false);
 const getMarkQuest: ComputedRef<boolean> = computed(() => props.markChainQuestList.includes(props.xp.id));
-const getDisableQuestItem: ComputedRef<boolean> = computed(() => {
-  if (props.disableQuestItem.chainedGlobalQuestChecked.value) {
-    return props.disableQuestItem.chainedGlobalQuestItemId.value === props.xp.id ? true : false;
-  } else {
-    return false;
-  }
-});
-
-watch(props, (newProps) => {
-  if (newProps.markChainQuestList.includes(props.xp.id)) {
-    checked.value = false;
-  }
-});
+const getDisableQuestItem: ComputedRef<boolean> = computed(() => props.disableQuestItemList.includes(props.xp.id));
 
 const getPreQuestSingle = (quest: string) => {
   if (questList[quest as keyof object]['preQuestSingle']) {
@@ -296,14 +291,14 @@ const getZoneQuestFinishedBy = (finishedBy: string, finishedByZoneId: string, zo
   return zoneIDs[finishedZoneId];
 }
 
-const checkQuest = (questId: string, questXp: number, checked: boolean): void => {
+const checkQuest = (questId: string, questXp: number, questName: string, zone: string, checked: boolean): void => {
   if (checked && !chainedQuestList.length) {
     getPreQuestSingle(questId);
     getNextQuestInChain(questId);
     getPreQuestGroup(questId);
     getExclusiveTo(questId);
   }
-  emit('check', questId, questXp, checked, chainedQuestList);
+  emit('check', questId, questXp, questName, zone, checked, chainedQuestList);
 }
 
 const checkForCompleted = async (event: Event, questId: string): Promise<void> => {
@@ -317,11 +312,11 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
 
 </script>
 <template>
-  <li :class="{'quest-row-disable': getMarkQuest}" class="quest-row">
+  <li :class="{'quest-row-mark': getMarkQuest}" class="quest-row">
     <div class="quest-first-row">
       <input 
         v-model="checked" 
-        @change="checkQuest(xp.id, xp.xp, checked)"
+        @change="checkQuest(xp.id, xp.xp, quest.name, getQuestReturnZone, checked)"
         :disabled="getDisableQuestItem"
         type="checkbox">
       <span :class="getQuestDifficultyClass" class="quest-xp">{{ xp.xp }}</span>
@@ -368,7 +363,7 @@ h3 {
   background-color: var(--umber);
   border-radius: 2px;
 }
-.quest-row-disable {
+.quest-row-mark {
   background-color: whitesmoke;
 }
 .quest-row input[type='checkbox'] {

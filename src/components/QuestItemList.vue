@@ -48,27 +48,43 @@ interface Quest {
 
 const props = defineProps<{
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
-  chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalMarkQuest: Ref<string[]> };
+  chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuest: Ref<string[]> };
 }>();
 const emit = defineEmits<{
-  (e: 'check', questId: string, checked: boolean, markChainQuestItemList: string[]): void;
+  (e: 'check', questId: string, questListSelected: { questId: string, questXp: number, questName: string, zone: string }, checked: boolean, markChainQuestItemList: string[]): void;
 }>();
 
 const searchQuestTerm = ref('');
 const xpItemListResult: Ref<Xp[]> = ref(xpItemList);
 const questItemListResult = ref(JSON.parse(JSON.stringify(questItemList)));
-const questItemListSelected: Ref<Array<{ id: string, xp: number }>> = ref([]);
-const questItemListSelectedXp = ref(0);
+const questItemListSelected: Ref<{ questId: string, questXp: number, questName: string, zone: string }> = ref({
+  questId: '',
+  questXp: 0,
+  questName: '',
+  zone: ''
+});
+const markChainQuestList: Ref<string[]> = ref([]);
+const disableQuestList: Ref<string[]> = ref([]);
 
 onMounted(() => {
   xpListResultFilter();
 })
 
-watch(props, (newProps) => {
-  if (newProps.factionFilter) {
+watch([props.factionFilter.faction, props.factionFilter.repFaction], (newProps) => {
+  if (newProps) {
     questItemListResult.value = JSON.parse(JSON.stringify(questItemList));
     xpListResultFilter();
     // TODO when changing factions
+  }
+});
+
+watch([props.chainedGlobal.chainedGlobalQuestId, props.chainedGlobal.chainedGlobalQuestChecked], (newProps) => {
+  if (newProps) {
+    if (props.chainedGlobal.chainedGlobalQuestChecked.value) {
+      disableQuestList.value = [...disableQuestList.value, props.chainedGlobal.chainedGlobalQuestId.value];
+    } else {
+      disableQuestList.value = disableQuestList.value.filter((key) => ![props.chainedGlobal.chainedGlobalQuestId.value].includes(key));
+    }
   }
 });
 
@@ -100,25 +116,26 @@ const searchQuest = (): void => {
   }
 };
 
-const checkQuest = (questId: string, questXp: number, checked: boolean, chainedQuestList: string[]) => {
+const checkQuest = (questId: string, questXp: number, questName: string, zone: string, checked: boolean, chainedQuestList: string[]) => {
   if (checked) {
     const quest = {
-      id: questId,
-      xp: questXp
+      questId: questId,
+      questXp: questXp,
+      questName: questName,
+      zone: zone
     };
-    questItemListSelected.value = [...questItemListSelected.value, quest];
-    // questListSelectedXp.value = questListSelectedXp.value + questXp; TODO better handling of xp accumulation
+    questItemListSelected.value = quest;
     if (chainedQuestList.length) {
-      questItemListSelected.value = questItemListSelected.value
-        .filter((key) => !chainedQuestList.includes(key.id));
+      markChainQuestList.value = [...markChainQuestList.value, ...chainedQuestList, ...props.chainedGlobal.chainedGlobalMarkQuest.value]
+        .filter((val, index, self) => self.indexOf(val) === index)
+        .filter(val => val !== questId);
     }
   } else {
-    questItemListSelected.value = questItemListSelected.value.filter((key) => key.id !== questId);
-    // questListSelectedXp.value = questListSelectedXp.value - questXp; TODO better handling of xp accumulation
+    markChainQuestList.value = markChainQuestList.value.filter(val => !chainedQuestList.includes(val));
   }
-  console.warn(questId, 'questId', checked)
-  emit('check', questId, checked, chainedQuestList);
+  emit('check', questId, questItemListSelected.value, checked, markChainQuestList.value);
 };
+
 </script>
 
 <template>
@@ -134,6 +151,7 @@ const checkQuest = (questId: string, questXp: number, checked: boolean, chainedQ
       :xp="xp"
       :quest="questItemList[xp.id as keyof object]"
       :chainedGlobal="chainedGlobal"
+      :disableQuestList="disableQuestList"
       :key="xp.id" />
   </ul>
 </template>
