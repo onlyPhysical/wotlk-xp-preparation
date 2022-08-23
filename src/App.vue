@@ -49,6 +49,7 @@ const getTotalQuestXpPerLevel: ComputedRef<number> = computed(() => {
 });
 const getCurrentLevel: ComputedRef<number> = computed(() => getTotalQuestXp.value > xpToLevel[initLevel]['xp'] ? 71 : 70);
 const getTotalQuestXpDiff: ComputedRef<number> = computed(() => getTotalQuestXp.value > xpToLevel[initLevel]['xp'] ? xpToLevel[initLevel]['xp'] : 0);
+const disableResetButton: ComputedRef<boolean> = computed(() => selectedQuestList.value.length ? false : true );
 
 const getFaction = (selectFaction: string) => {
   if (faction.value === selectFaction) return;
@@ -93,6 +94,14 @@ const addQuestItem = (questId: string, questListSelected: { questId: string, que
     selectedQuestList.value = selectedQuestList.value.filter((key) => key.questId !== questId);
   }
 }
+
+const reset = (): void =>  {
+  factionFilter.faction.value = 0;
+  factionFilter.repFaction.value = 0;
+  faction.value = '';
+  repFaction.value = '';
+  selectedQuestList.value = [];
+}
 </script>
 
 <template>
@@ -102,65 +111,68 @@ const addQuestItem = (questId: string, questListSelected: { questId: string, que
     </div>
   </header>
   <div class="landing-block">
-    <div class="faction-block">
-      <span>Choose Faction</span>
-      <div class="faction-wrap">
-        <span @click="getFaction('alliance')" :class="{ selected: faction === 'alliance' }" class="faction-alliance">
-          <span class="faction-icon"></span>
-          <span class="faction-name">Alliance</span>
-        </span>
-        <span @click="getFaction('horde')" :class="{ selected: faction === 'horde' }" class="faction-horde">
-          <span class="faction-icon"></span>
-          <span class="faction-name">Horde</span>
+    <div class="faction-block-wrapper">
+      <div class="faction-block">
+        <span>Choose Faction</span>
+        <div class="faction-wrap">
+          <span @click="getFaction('alliance')" :class="{ selected: faction === 'alliance' }" class="faction-alliance">
+            <span class="faction-icon"></span>
+            <span class="faction-name">Alliance</span>
           </span>
-      </div>
-    </div>
-    <div class="faction-block">
-      <span>Choose Shattrath Faction</span>
-      <div class="faction-wrap">
-        <span @click="getFaction('aldor')" :class="{ selected: repFaction === 'aldor' }" class="faction-aldor">
-          <span class="faction-icon"></span>
-          <span class="faction-name">Aldor</span>
-        </span>
-        <span @click="getFaction('scryers')" :class="{ selected: repFaction === 'scryers' }" class="faction-scryers">
-          <span class="faction-icon"></span>
-          <span class="faction-name">Scryers</span>
-        </span>
-      </div>
-    </div>
-  </div>
-  <div class="selected-quests-result">
-    <p>Total XP {{ getTotalQuestXp }}</p>
-    <div class="quests-xp-bar"><div class="quests-xp-bar-inner" :style="{ width: `${getTotalQuestXpPerLevel}%` }"></div></div>
-    <p>XP {{ (getTotalQuestXp-getTotalQuestXpDiff) }} / {{ getCurrentXpToLevel }} <span>({{ getCurrentLevel }})</span></p>
-  </div>
-  <main>
-    <div class="main-block">
-      <QuestList 
-      v-if="factionFilterLength"
-      @check="addQuest"
-      :factionFilter="factionFilter"
-      :chainedItemGlobal="chainedItemGlobal" />
-    </div>
-    <div class="main-block">
-      <QuestItemList
-        v-if="factionFilterLength"
-        @check="addQuestItem"
-        :factionFilter="factionFilter"
-        :chainedGlobal="chainedGlobal" />
-    </div>
-    <div class="main-block">
-      <!-- {{ questListSelectedXp }} -->
-      <li v-for="selectedQuest in selectedQuestList">
-        <div>
-          <span>{{ selectedQuest.questXp }}</span>
-          <a 
-            :href="`https://www.wowhead.com/wotlk/quest=${selectedQuest.questId}`"
-            :data-wowhead="`quest=${selectedQuest.questId}`"
-            target="_blank">{{ selectedQuest.questName }}</a>
-          <span>{{ selectedQuest.zone }}</span>
+          <span @click="getFaction('horde')" :class="{ selected: faction === 'horde' }" class="faction-horde">
+            <span class="faction-icon"></span>
+            <span class="faction-name">Horde</span>
+            </span>
         </div>
-      </li>
+      </div>
+      <div class="faction-block">
+        <span>Choose Shattrath Faction</span>
+        <div class="faction-wrap">
+          <span @click="getFaction('aldor')" :class="{ selected: repFaction === 'aldor' }" class="faction-aldor">
+            <span class="faction-icon"></span>
+            <span class="faction-name">Aldor</span>
+          </span>
+          <span @click="getFaction('scryers')" :class="{ selected: repFaction === 'scryers' }" class="faction-scryers">
+            <span class="faction-icon"></span>
+            <span class="faction-name">Scryers</span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <button @click="reset()" :disabled="disableResetButton" class="reset-button">Reset</button>
+  </div>
+  <main v-if="factionFilterLength">
+    <div class="selected-quests-result">
+      <p>Total XP {{ getTotalQuestXp }}</p>
+      <div class="quests-xp-bar"><div class="quests-xp-bar-inner" :style="{ width: `${getTotalQuestXpPerLevel}%` }"></div></div>
+      <p>XP {{ (getTotalQuestXp-getTotalQuestXpDiff) }} / {{ getCurrentXpToLevel }} <span>({{ getCurrentLevel }})</span></p>
+    </div>
+    <div class="main-block-wrapper">
+      <div class="main-block">
+        <QuestList 
+        @check="addQuest"
+        :factionFilter="factionFilter"
+        :chainedItemGlobal="chainedItemGlobal" />
+      </div>
+      <div class="main-block">
+        <QuestItemList
+          @check="addQuestItem"
+          :factionFilter="factionFilter"
+          :chainedGlobal="chainedGlobal" />
+      </div>
+      <div class="main-block">
+        <!-- {{ questListSelectedXp }} -->
+        <li v-for="selectedQuest in selectedQuestList">
+          <div>
+            <span>{{ selectedQuest.questXp }}</span>
+            <a 
+              :href="`https://www.wowhead.com/wotlk/quest=${selectedQuest.questId}`"
+              :data-wowhead="`quest=${selectedQuest.questId}`"
+              target="_blank">{{ selectedQuest.questName }}</a>
+            <span>{{ selectedQuest.zone }}</span>
+          </div>
+        </li>
+      </div>
     </div>
   </main>
 </template>
@@ -209,8 +221,12 @@ header .wrapper {
 }
 
 .landing-block {
-  display: flex;
   margin: 0 auto;
+  text-align: center;
+}
+
+.faction-block-wrapper {
+  display: flex;
 }
 
 .faction-block {
@@ -281,6 +297,15 @@ header .wrapper {
   border-bottom: solid 3px #b5774a;
 }
 
+.reset-button {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.reset-button[disabled] {
+  cursor: default;
+}
+
 .selected-quests-result {
   position: sticky;
   top: 0;
@@ -305,9 +330,12 @@ header .wrapper {
 }
 
 main {
+  padding: 0 8rem;
+}
+
+.main-block-wrapper {
   display: flex;
   flex-direction: row;
-  padding: 0 8rem;
 }
 
 .main-block {
