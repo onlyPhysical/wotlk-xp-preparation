@@ -14,38 +14,6 @@ interface Xp {
   requiredRepFaction: number; 
 }
 
-interface Quest {
-  name: string | null;
-  startedBy: object | null;
-  finishedBy: {
-    creatureEnd: { npcZoneId: number } | null;
-    objectEnd: { objectZoneId: number } | null;
-  };
-  requiredLevel: number;
-  questLevel: number | null;
-  requiredRaces: number;
-  requiredClasses : number;
-  objectivesText : object | null;
-  triggerEnd: object | null;
-  objectives: object | null;
-  sourceItemId: number | null;
-  preQuestGroup: object | null;
-  preQuestSingle: object | null;
-  childQuests: object | null;
-  inGroupWith: object | null;
-  exclusiveTo: object | null;
-  zoneOrSort: number | null;
-  requiredSkill: object | null;
-  requiredMinRep: object | null;
-  requiredMaxRep: object | null;
-  requiredSourceItems: object | null;
-  nextQuestInChain: number | null;
-  questFlags: number | null;
-  specialFlags: number | null;
-  parentQuest: number | null;
-  extraObjectives?: object | null;
-}
-
 const props = defineProps<{
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
   chainedItemGlobal: { chainedGlobalQuestItemId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuestItem: Ref<string[]> };

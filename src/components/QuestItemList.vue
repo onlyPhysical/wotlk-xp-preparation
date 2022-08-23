@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import xpItemList from "../../public/data/xpItemData.json";
 import questItemList from "../../public/data/questItemData.json";
-import { ref, computed, watch, onMounted } from "vue";
-import type { Ref, ComputedRef } from "vue";
+import { ref, watch, onMounted } from "vue";
+import type { Ref } from "vue";
 
 import QuestItem from "./QuestItem.vue";
 
