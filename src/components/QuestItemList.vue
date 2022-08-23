@@ -113,6 +113,8 @@ const searchQuest = (): void => {
   if (questItemListSearchResult.length > 0) {
     const questItemListSearchResultKeys = Object.keys(Object.fromEntries(questItemListSearchResult));
     xpItemListResult.value = xpItemList.filter((key) => questItemListSearchResultKeys.includes(key.id));
+  } else {
+    xpItemListResult.value = [];
   }
 };
 
