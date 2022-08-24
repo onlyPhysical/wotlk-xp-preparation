@@ -11,6 +11,8 @@ const xpToLevel = {
   70: { xp: 1523800 },
   71: { xp: 1539600 }
 }
+const MAX_QUEST_IN_LOG = 25;
+const isQuetsLogFull = ref(false);
 const faction = ref('');
 const repFaction = ref('');
 const factionFilter: { faction: Ref<number>, repFaction: Ref<number> } = {
@@ -82,6 +84,7 @@ const addQuest = (questId: string, questListSelected: { questId: string, questXp
   } else {
     selectedQuestList.value = selectedQuestList.value.filter((key) => key.questId !== questId);
   }
+  isQuetsLogFull.value = selectedQuestList.value.length === MAX_QUEST_IN_LOG ? true : false;
 }
 
 const addQuestItem = (questId: string, questListSelected: { questId: string, questXp: number, questName: string, zone: string }, checked: boolean, markQuest: string[]): void => {
@@ -152,7 +155,8 @@ const reset = (): void =>  {
         <QuestList 
         @check="addQuest"
         :factionFilter="factionFilter"
-        :chainedItemGlobal="chainedItemGlobal" />
+        :chainedItemGlobal="chainedItemGlobal"
+        :isQuetsLogFull="isQuetsLogFull" />
       </div>
       <div class="main-block">
         <QuestItemList

@@ -51,6 +51,7 @@ const props = defineProps<{
   quest: Quest;
   markChainQuestList: string[];
   disableQuestItemList: string[];
+  isQuetsLogFull: boolean;
 }>();
 const emit = defineEmits<{
   (e: 'check', questId: string, questXp: number, questName: string, zone: string, checked: boolean, chainedQuestList: string[]): void;
@@ -58,11 +59,18 @@ const emit = defineEmits<{
 
 const checkForCompetedMsg: Ref<string> = ref('Is completed');
 const checked = ref(false);
+const isQuetsLogFull = ref(false);
 let chainedQuestList: string[] = [];
 
-watch(props, (newProps) => {
-  if (newProps.markChainQuestList.includes(props.xp.id)) {
+watch(props.markChainQuestList, (newProps) => {
+  if (newProps.includes(props.xp.id)) {
     checked.value = false;
+  }
+});
+
+watch(props, (newProps) => {
+  if (newProps) {
+    isQuetsLogFull.value = checked.value === false ? props.isQuetsLogFull : false;
   }
 });
 
@@ -163,7 +171,7 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
       <input 
         v-model="checked" 
         @change="checkQuest(xp.id, xp.xp, quest.name, getQuestReturnZone, checked)"
-        :disabled="getDisableQuestItem"
+        :disabled="getDisableQuestItem || isQuetsLogFull"
         type="checkbox">
       <span :class="getQuestDifficultyClass" class="quest-xp">{{ xp.xp }}</span>
       <a 
