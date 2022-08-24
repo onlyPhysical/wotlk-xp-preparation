@@ -152,6 +152,7 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
       v-for="xp in xpItemListResult"
       :xp="xp"
       :quest="questItemList[xp.id as keyof object]"
+      :factionFilter="factionFilter"
       :chainedGlobal="chainedGlobal"
       :disableQuestList="disableQuestList"
       :key="xp.id" />

@@ -49,6 +49,7 @@ interface Quest {
 const props = defineProps<{
   xp: Xp;
   quest: Quest;
+  factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
   markChainQuestList: string[];
   disableQuestItemList: string[];
   isQuetsLogFull: boolean;
@@ -62,7 +63,14 @@ const checked = ref(false);
 const isQuetsLogFull = ref(false);
 let chainedQuestList: string[] = [];
 
+watch([props.factionFilter.faction, props.factionFilter.repFaction], (newProps) => {
+  if (newProps) {
+    checked.value = false;
+  }
+});
+
 watch(props.markChainQuestList, (newProps) => {
+  console.warn('Reeeee');
   if (newProps.includes(props.xp.id)) {
     checked.value = false;
   }

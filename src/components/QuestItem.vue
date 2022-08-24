@@ -49,6 +49,7 @@ interface Quest {
 const props = defineProps<{
   xp: Xp;
   quest: Quest;
+  factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
   chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuest: Ref<string[]> };
   disableQuestList: string[];
 }>();
@@ -59,6 +60,12 @@ const emit = defineEmits<{
 const checkForCompetedMsg: Ref<string> = ref('Is completed');
 const checked = ref(false);
 let chainedQuestList: string[] = [];
+
+watch([props.factionFilter.faction, props.factionFilter.repFaction], (newProps) => {
+  if (newProps) {
+    checked.value = false;
+  }
+});
 
 const getQuestDifficultyClass: ComputedRef<string> = computed(() => {
   if (props.xp.xp >= 20000) {

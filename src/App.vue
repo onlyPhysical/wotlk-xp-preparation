@@ -55,6 +55,7 @@ const disableResetButton: ComputedRef<boolean> = computed(() => selectedQuestLis
 
 const getFaction = (selectFaction: string) => {
   if (faction.value === selectFaction) return;
+  selectedQuestList.value = [];
   switch (selectFaction) {
     case 'alliance':
       factionFilter.faction.value = 690; // when selecting alliance we are actually filtering by horde

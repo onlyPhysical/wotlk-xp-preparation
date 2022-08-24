@@ -77,7 +77,7 @@ const showMoreQuestButton: ComputedRef<boolean> = computed(() => (xpListTotal.va
 const xpListResultFilter = (): void => {
   xpListResult.value = xpList;
   xpListResult.value = xpListResult.value.filter(key => {
-    const factionFilter = key.requiredRaces !== props.factionFilter.faction.value && key.requiredRepFaction !== props.factionFilter.repFaction.value;
+    const factionFilter: boolean = key.requiredRaces !== props.factionFilter.faction.value && key.requiredRepFaction !== props.factionFilter.repFaction.value;
     if (!factionFilter) {
       delete questListResult.value[key.id as keyof object];
     }
@@ -142,6 +142,7 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
       v-for="xp in xpListResult.slice(0, questListNumber)"
       :xp="xp"
       :quest="questList[xp.id as keyof object]"
+      :factionFilter="factionFilter"
       :markChainQuestList="markChainQuestList"
       :disableQuestItemList="disableQuestItemList"
       :isQuetsLogFull="isQuetsLogFull"
