@@ -144,7 +144,7 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
   <!-- <pre>{{ questItemList['11041'] }}</pre> -->
   <div class="main-block-header">
     <h2>Quests</h2>
-    <input v-model.trim="searchQuestTerm" @input="searchQuest()" class="search-quest" placeholder="Quest name">
+    <input v-model.trim="searchQuestTerm" @input="searchQuest()" class="search-quest input-field" placeholder="Quest name">
   </div>
   <ul>
     <QuestItem

@@ -1,51 +1,13 @@
 :root {
-/* CSS HEX */
-/* --rich-black-fogra-39: #0a0908ff;
---gunmetal: #22333bff;
---almond: #eae0d5ff;
---khaki-web: #c6ac8fff;
---umber: #5e503fff; */
+  --color-background: #eee;
+  --color-background-2: #777;
+  --color-background-3: #333;
+  --color-background-4: #ccc;
 
-/* CSS HSL */
---rich-black: hsla(30, 11%, 4%, 1);
---gunmetal: hsla(199, 27%, 18%, 1);
---almond: hsla(31, 33%, 88%, 1);
---khaki-web: hsla(32, 33%, 67%, 1);
---umber: hsla(33, 20%, 31%, 1);
-
-/* SCSS Gradient */
-/* $gradient-top: linear-gradient(0deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
-$gradient-right: linear-gradient(90deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
-$gradient-bottom: linear-gradient(180deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
-$gradient-left: linear-gradient(270deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
-$gradient-top-right: linear-gradient(45deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
-$gradient-bottom-right: linear-gradient(135deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
-$gradient-top-left: linear-gradient(225deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
-$gradient-bottom-left: linear-gradient(315deg, #0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff);
-$gradient-radial: radial-gradient(#0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5e503fff); */
+  --color-text: #333;
+  --color-text-2: #fff;
+  --color-text-3: #777;
 }
-
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--rich-black);
-  --color-background-2: var(--gunmetal);
-
-  --color-heading: var(--khaki-web);
-
-  --color-text: var(--almond);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--rich-black);
-    --color-background-2: var(--gunmetal);
-  
-    --color-heading: var(--khaki-web);
-
-    --color-text: var(--almond);
-  }
-}
-
 *,
 *::before,
 *::after {
@@ -55,17 +17,135 @@ $gradient-radial: radial-gradient(#0a0908ff, #22333bff, #eae0d5ff, #c6ac8fff, #5
   font-weight: normal;
   list-style: none;
 }
-
+@font-face {
+  font-family: 'Roboto';
+  src: url('./../../public/font/RobotoMono-VariableFont_wght.ttf') format('woff2 supports variations'),
+       url('./../../public/font/RobotoMono-VariableFont_wght.ttf') format('woff2-variations');
+  font-weight: 100 1000;
+}
 body {
   min-height: 100vh;
   color: var(--color-text);
   background: var(--color-background);
   /* transition: color 0.5s, background-color 0.5s; */
   line-height: 1.6;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, Lato, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Roboto', 'Segoe UI', Roboto, Oxygen, Ubuntu,
     Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   font-size: 15px;
+  letter-spacing: -1px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+i {
+  display: flex;
+  place-items: center;
+  place-content: center;
+  width: 32px;
+  height: 32px;
+
+  color: var(--color-text);
+}
+h3 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: var(--color-heading);
+}
+.quest-row {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background-color: var(--color-background-4);
+  border-radius: 3px;
+}
+.quest-row.selected-quest-row {
+  line-height: 14px;
+  background-color: var(--color-background);
+}
+.quest-row-mark {
+  background-color: whitesmoke;
+}
+.quest-row input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+}
+.quest-xp {
+  font-size: 18px;
+  margin-right: 10px;
+}
+.quest-xp.quest-xp-orange {
+  color: rgb(255 128 64 / 80%); 
+}
+.quest-xp.quest-xp-yellow {
+  color: rgb(255 255 0 / 80%); 
+}
+.quest-xp.quest-xp-green {
+  color: rgb(64 191 64 / 80%); 
+}
+.quest-xp.quest-xp-gray {
+  color: rgb(128 128 128 / 80%);
+}
+.quest-name {
+  position: relative;
+  top: 3px;
+  display: inline-block;
+  max-width: 300px;
+  white-space: nowrap;
+  line-height: 21px;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quest-name:hover {
+  text-decoration: underline; 
+}
+
+.quest-first-row .quest-is-completed {
+  float: right;
+  padding: 0 10px;
+}
+.quest-second-row {
+  display: flex;
+  justify-content: space-between;
+}
+.quest-second-row > div {
+  display: flex;
+}
+.quest-second-row span {
+  margin-right: 10px;
+}
+.quest-race-image img,.quest-skill-image img {
+  display: block;
+  height: 25px;
+}
+.quest-chain-image {
+  position: relative;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  background: url("./../public/images/chain-quest.webp") no-repeat;
+  background-size: cover;
+}
+.quest-second-row .quest-zone-return {
+  margin-right: 0;
+}
+.selected-quest-row .quest-zone-return {
+  float: right;
+  line-height: 24px;
+}
+.button {
+  height: 28px;
+  padding: 0 18px;
+  cursor: pointer;
+  color: var(--color-text-2);
+  border: none;
+  border-radius: 3px;
+  background-color: var(--color-background-3);
+}
+.input-field {
+  height: 28px;
+  padding: 0 10px;
+  border: solid 1px var(--color-background-3);
+  border-radius: 3px;
 }

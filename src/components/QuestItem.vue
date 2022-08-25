@@ -172,7 +172,7 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
         :data-wowhead="`quest=${xp.id}`"
         target="_blank"
         class="quest-name">{{ quest.name }}</a>
-      <button @click="checkForCompleted($event, xp.id)" class="quest-is-completed">Check if completed</button>
+      <button @click="checkForCompleted($event, xp.id)" class="quest-is-completed button">Completed?</button>
     </div>
     <div class="quest-second-row">
       <div>
@@ -188,77 +188,11 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
 </template>
 
 <style scoped>
-i {
-  display: flex;
-  place-items: center;
-  place-content: center;
-  width: 32px;
-  height: 32px;
-
-  color: var(--color-text);
+/* .quest-row {
+  color: var(--color-text-2);
+  background-color: var(--color-background-2);
 }
-
-h3 {
-  font-size: 1.2rem;
-  font-weight: 500;
-  margin-bottom: 0.4rem;
-  color: var(--color-heading);
-}
-.quest-row {
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  background-color: var(--umber);
-  border-radius: 2px;
-}
-.quest-row-mark {
-  background-color: whitesmoke;
-}
-.quest-row input[type='checkbox'] {
-  margin-right: 10px;
-}
-.quest-xp {
-  font-size: 18px;
-  margin-right: 10px;
-}
-.quest-xp.quest-xp-orange {
-  color: rgb(255 128 64 / 80%); 
-}
-.quest-xp.quest-xp-yellow {
-  color: rgb(255 255 0 / 80%); 
-}
-.quest-xp.quest-xp-green {
-  color: rgb(64 191 64 / 80%); 
-}
-.quest-xp.quest-xp-gray {
-  color: rgb(128 128 128 / 80%);
-}
-.quest-name {
-  font-size: 16px;
-}
-.quest-is-completed {
-  float: right;
-}
-.quest-second-row {
-  display: flex;
-  justify-content: space-between;
-}
-.quest-second-row > div {
-  display: flex;
-}
-.quest-second-row span {
-  margin-right: 10px;
-}
-.quest-race-image img,.quest-skill-image img {
-  display: block;
-  height: 25px;
-}
-.quest-chain-image {
-  width: 25px;
-  height: 25px;
-  background: url("./../public/images/chain-quest.webp") no-repeat;
-}
-.quest-second-row .quest-zone-return {
-  margin-right: 0;
-}
-
+.quest-row a {
+  color: var(--color-text-2);
+} */
 </style>

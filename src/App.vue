@@ -44,9 +44,9 @@ const getTotalQuestXp: ComputedRef<number> = computed(() => {
 const getCurrentXpToLevel: ComputedRef<number> = computed(() => xpToLevel[getCurrentLevel.value as keyof object]['xp']);
 const getTotalQuestXpPerLevel: ComputedRef<number> = computed(() => {
   if (getCurrentLevel.value === initLevel) {
-    return (getTotalQuestXp.value/getCurrentXpToLevel.value)*100;
+    return Math.round((getTotalQuestXp.value/getCurrentXpToLevel.value)*100);
   } else {
-    return ((getTotalQuestXp.value-xpToLevel[initLevel]['xp'])/getCurrentXpToLevel.value)*100;
+    return Math.round(((getTotalQuestXp.value-xpToLevel[initLevel]['xp'])/getCurrentXpToLevel.value)*100);
   }
 });
 const getCurrentLevel: ComputedRef<number> = computed(() => getTotalQuestXp.value > xpToLevel[initLevel]['xp'] ? 71 : 70);
@@ -143,13 +143,13 @@ const reset = (): void =>  {
         </div>
       </div>
     </div>
-    <button @click="reset()" :disabled="disableResetButton" class="reset-button">Reset</button>
   </div>
   <main v-if="factionFilterLength">
     <div class="selected-quests-result">
+      <button @click="reset()" :disabled="disableResetButton" class="reset-button button">Reset</button>
       <p>Total XP {{ getTotalQuestXp }}</p>
       <div class="quests-xp-bar"><div class="quests-xp-bar-inner" :style="{ width: `${getTotalQuestXpPerLevel}%` }"></div></div>
-      <p>XP {{ (getTotalQuestXp-getTotalQuestXpDiff) }} / {{ getCurrentXpToLevel }} <span>({{ getCurrentLevel }})</span></p>
+      <p>XP {{ (getTotalQuestXp-getTotalQuestXpDiff) }} / {{ getCurrentXpToLevel }} <span>({{ getTotalQuestXpPerLevel }}% to level {{ getCurrentLevel }})</span></p>
     </div>
     <div class="main-block-wrapper">
       <div class="main-block">
@@ -166,16 +166,14 @@ const reset = (): void =>  {
           :chainedGlobal="chainedGlobal" />
       </div>
       <div class="main-block">
-        <!-- {{ questListSelectedXp }} -->
-        <li v-for="selectedQuest in selectedQuestList">
-          <div>
-            <span>{{ selectedQuest.questXp }}</span>
-            <a 
-              :href="`https://www.wowhead.com/wotlk/quest=${selectedQuest.questId}`"
-              :data-wowhead="`quest=${selectedQuest.questId}`"
-              target="_blank">{{ selectedQuest.questName }}</a>
-            <span>{{ selectedQuest.zone }}</span>
-          </div>
+        <li v-for="selectedQuest in selectedQuestList" class="quest-row selected-quest-row">
+          <span class="quest-xp">{{ selectedQuest.questXp }}</span>
+          <a 
+            :href="`https://www.wowhead.com/wotlk/quest=${selectedQuest.questId}`"
+            :data-wowhead="`quest=${selectedQuest.questId}`"
+            target="_blank"
+            class="quest-name">{{ selectedQuest.questName }}</a>
+          <span class="quest-zone-return">{{ selectedQuest.zone }}</span>
         </li>
       </div>
     </div>
@@ -188,67 +186,56 @@ const reset = (): void =>  {
 #app {
   font-weight: normal;
 }
-
 header {
   line-height: 1.5;
 }
-
 .logo {
   display: block;
   margin: 0 auto 2rem;
 }
-
 a {
   text-decoration: none;
   color: var(--color-text);
   transition: 0.4s;
 }
-
 #app {
   display: grid;
   grid-template-rows: auto auto;
+  padding-bottom: 20px;
 }
-
 header {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 header .wrapper {
   display: flex;
   place-items: flex-start;
   flex-wrap: wrap;
 }
-
 .logo {
   margin: 0 2rem 0 0;
 }
-
 .landing-block {
   margin: 0 auto;
   text-align: center;
 }
-
 .faction-block-wrapper {
   display: flex;
+  margin-bottom: 10px;
 }
-
 .faction-block {
   display: flex;
   flex-direction: column;
   padding: 0 20px;
 }
-
 .faction-block > span {
   text-align: center;
 }
-
 .faction-wrap {
   display: flex;
   text-align: center;
 }
-
 .faction-wrap > span {
   box-sizing: content-box;
   width: 80px;
@@ -258,112 +245,95 @@ header .wrapper {
   cursor: pointer;
   border-bottom: solid 3px transparent;
 }
-
 .faction-wrap .faction-icon {
   display: block;
   width: 64px;
   height: 64px;
   margin: 0 auto;
 }
-
 .faction-wrap .faction-alliance .faction-icon {
   background: url("./../public/images/alliance-banner.webp") no-repeat center;
 }
-
 .faction-wrap .faction-alliance.selected,
 .faction-wrap .faction-alliance:hover {
   border-bottom: solid 3px #201ce0;
 }
-
 .faction-wrap .faction-horde .faction-icon {
   background: url("./../public/images/horde-banner.webp") no-repeat center;
 }
-
 .faction-wrap .faction-horde.selected,
 .faction-wrap .faction-horde:hover {
   border-bottom: solid 3px #b00c08;
 }
-
 .faction-wrap .faction-aldor .faction-icon {
   background: url("./../public/images/aldor-faction.webp") no-repeat center;
 }
-
 .faction-wrap .faction-aldor.selected,
 .faction-wrap .faction-aldor:hover {
   border-bottom: solid 3px #648fae;
 }
-
 .faction-wrap .faction-scryers .faction-icon {
   background: url("./../public/images/scryers-faction.webp") no-repeat center;
 }
-
 .faction-wrap .faction-scryers.selected,
 .faction-wrap .faction-scryers:hover {
   border-bottom: solid 3px #b5774a;
 }
-
 .reset-button {
   display: inline-block;
   cursor: pointer;
 }
-
 .reset-button[disabled] {
+  color: var(--color-text-3);
   cursor: default;
 }
-
 .selected-quests-result {
   position: sticky;
   top: 0;
   padding: 20px 0;
   text-align: center;
-  background-color: var(--rich-black);
+  background-color: var(--color-background);
   z-index: 10;
+  /* box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2); */
 }
-
 .quests-xp-bar {
   width: 1000px;
-  height: 20px;
+  height: 18px;
   margin: 0 auto;
-  border: solid 2px blue;
+  border: solid 2px #003f90;
   border-radius: 3px;
 }
-
 .quests-xp-bar-inner {
   width: 0;
-  height: 16px;
-  background: blue;
+  height: 14px;
+  background: #003f90;
 }
-
 main {
   padding: 0 8rem;
 }
-
 .main-block-wrapper {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 }
-
 .main-block {
-  flex: 0 0 33%;
-  padding: 0 1rem;
+  flex: 0 0 32.5%;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 5px;
 }
-
 .main-block ul {
   padding: 0;
 }
-
 .main-block-header {
     display: flex;
     flex-direction: row;
     margin-top: 0.5rem;
 }
-
 .main-block-header h2 {
   margin-right: 10px;
 }
-
 .search-quest {
   width: 100%;
 }
-/* } */
 </style>

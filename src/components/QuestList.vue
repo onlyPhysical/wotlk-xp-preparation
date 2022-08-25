@@ -134,7 +134,7 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
   <!-- <pre>{{ questList['10218'] }}</pre> -->
   <div class="main-block-header">
     <h2>Quests</h2>
-    <input v-model.trim="searchQuestTerm" @input="searchQuest()" class="search-quest" placeholder="Quest name">
+    <input v-model.trim="searchQuestTerm" @input="searchQuest()" class="search-quest input-field" placeholder="Quest name">
   </div>
   <ul>
     <Quest
@@ -148,5 +148,5 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
       :isQuetsLogFull="isQuetsLogFull"
       :key="xp.id" />
   </ul>
-  <button v-if="showMoreQuestButton" @click="showMoreQuest()">Show {{ QUEST_LIST_STEP }} more quest of {{ (xpListTotal - questListNumber) }}</button>
+  <button v-if="showMoreQuestButton" @click="showMoreQuest()" class="button">Show {{ QUEST_LIST_STEP }} more quest of {{ (xpListTotal - questListNumber) }}</button>
 </template>
