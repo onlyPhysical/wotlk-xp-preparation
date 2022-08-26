@@ -57,7 +57,7 @@ const emit = defineEmits<{
   (e: 'check', questId: string, questXp: number, questName: string, zone: string, checked: boolean, chainedQuestList: string[]): void;
 }>();
 
-const checkForCompetedMsg: Ref<string> = ref('Is completed');
+const checkForCompetedMsg: Ref<string> = ref('Check if you have completed this quest');
 const checked = ref(false);
 let chainedQuestList: string[] = [];
 
@@ -148,13 +148,17 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
   emit('check', questId, questXp, questName, zone, checked, chainedQuestList);
 }
 
-const checkForCompleted = async (event: Event, questId: string): Promise<void> => {
+const checkForCompleted = async (questId: string): Promise<void> => {
   if (!questId) return;
   const checkForCompetedString = `/run print(C_QuestLog.IsQuestFlaggedCompleted(${questId}))`;
   await navigator.clipboard.writeText(checkForCompetedString).then(() => {
-    // checkForCompetedMsg.value = 'Copied!'
+    checkForCompetedMsg.value = 'Copied! Paste in game chat'
   }
   , () => checkForCompetedMsg.value = 'Not copied!');
+}
+
+const checkForCompletedButtonOut = (): void => {
+  checkForCompetedMsg.value = 'Check if you have completed this quest';
 }
 
 </script>
@@ -172,7 +176,12 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
         :data-wowhead="`quest=${xp.id}`"
         target="_blank"
         class="quest-name">{{ quest.name }}</a>
-      <button @click="checkForCompleted($event, xp.id)" class="quest-is-completed button">Completed?</button>
+      <button 
+        @click="checkForCompleted(xp.id)"
+        @mouseout="checkForCompletedButtonOut()"
+        :content="checkForCompetedMsg"
+        v-tippy="{ hideOnClick: false }"
+        class="quest-is-completed button">Completed?</button>
     </div>
     <div class="quest-second-row">
       <div>

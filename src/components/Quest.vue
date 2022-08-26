@@ -58,7 +58,7 @@ const emit = defineEmits<{
   (e: 'check', questId: string, questXp: number, questName: string, zone: string, checked: boolean, chainedQuestList: string[]): void;
 }>();
 
-const checkForCompetedMsg: Ref<string> = ref('Is completed');
+const checkForCompetedMsg: Ref<string> = ref('Check if you have completed this quest');
 const checked = ref(false);
 const isQuetsLogFull = ref(false);
 let chainedQuestList: string[] = [];
@@ -70,7 +70,6 @@ watch([props.factionFilter.faction, props.factionFilter.repFaction], (newProps) 
 });
 
 watch(props.markChainQuestList, (newProps) => {
-  console.warn('Reeeee');
   if (newProps.includes(props.xp.id)) {
     checked.value = false;
   }
@@ -163,13 +162,17 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
   emit('check', questId, questXp, questName, zone, checked, chainedQuestList);
 }
 
-const checkForCompleted = async (event: Event, questId: string): Promise<void> => {
+const checkForCompleted = async (questId: string): Promise<void> => {
   if (!questId) return;
   const checkForCompetedString = `/run print(C_QuestLog.IsQuestFlaggedCompleted(${questId}))`;
   await navigator.clipboard.writeText(checkForCompetedString).then(() => {
-    // checkForCompetedMsg.value = 'Copied!'
+    checkForCompetedMsg.value = 'Copied! Paste in game chat'
   }
   , () => checkForCompetedMsg.value = 'Not copied!');
+}
+
+const checkForCompletedButtonOut = (): void => {
+  checkForCompetedMsg.value = 'Check if you have completed this quest';
 }
 
 </script>
@@ -187,7 +190,12 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
         :data-wowhead="`quest=${xp.id}`"
         target="_blank"
         class="quest-name">{{ quest.name }}</a>
-      <button @click="checkForCompleted($event, xp.id)" class="quest-is-completed button">Completed?</button>
+      <button 
+        @click="checkForCompleted(xp.id)"
+        @mouseout="checkForCompletedButtonOut()"
+        :content="checkForCompetedMsg"
+        v-tippy="{ hideOnClick: false }"
+        class="quest-is-completed button">Completed?</button>
     </div>
     <div class="quest-second-row">
       <div>
@@ -195,7 +203,7 @@ const checkForCompleted = async (event: Event, questId: string): Promise<void> =
         <span v-if="getQuestRequiredRaces" class="quest-race-image"><img :src="`../../public/images/${getQuestRequiredRaces}-banner.webp`"></span>
         <span v-if="getQuestRequiredClass">{{ getQuestRequiredClass }}</span>
         <span v-if="getQuestRequiredSkill" class="quest-skill-image"><img :src="`../../public/images/${getQuestRequiredSkill}.webp`"></span>
-        <span v-if="getQuestChain" class="quest-chain-image"></span>
+        <span v-if="getQuestChain" class="quest-chain-image" content="This quest is part of a quest series, you can have only one quest in your Quest Log from a particular chain!" v-tippy></span>
       </div>
       <span class="quest-zone-return">{{ getQuestReturnZone }}</span>
     </div>
