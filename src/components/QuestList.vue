@@ -17,7 +17,7 @@ interface Xp {
 const props = defineProps<{
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
   chainedItemGlobal: { chainedGlobalQuestItemId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuestItem: Ref<string[]> };
-  isQuetsLogFull: boolean;
+  isQuetsLogFull: { full: Ref<boolean> };
 }>();
 const emit = defineEmits<{
   (e: 'check', questId: string, questListSelected: { questId: string, questXp: number, questName: string, zone: string }, checked: boolean, markChainQuestList: string[]): void;
@@ -48,7 +48,6 @@ watch([props.factionFilter.faction, props.factionFilter.repFaction], (newProps) 
   if (newProps) {
     questListResult.value = JSON.parse(JSON.stringify(questList));
     xpListResultFilter();
-    // TODO when changing factions
   }
 });
 
@@ -65,7 +64,8 @@ watch([props.chainedItemGlobal.chainedGlobalQuestItemId, props.chainedItemGlobal
 watch(props.chainedItemGlobal.chainedGlobalMarkQuestItem, (newProps) => {
   if (newProps) {
     if (props.chainedItemGlobal.chainedGlobalQuestChecked.value) {
-      markChainQuestList.value = [...markChainQuestList.value, ...props.chainedItemGlobal.chainedGlobalMarkQuestItem.value];
+      markChainQuestList.value = [...markChainQuestList.value, ...props.chainedItemGlobal.chainedGlobalMarkQuestItem.value]
+        .filter((val, index, self) => self.indexOf(val) === index);
     } else {
       markChainQuestList.value = markChainQuestList.value.filter((key) => props.chainedItemGlobal.chainedGlobalMarkQuestItem.value.includes(key));
     }
@@ -119,9 +119,11 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
     };
     questListSelected.value = quest;
     if (chainedQuestList.length) {
-      markChainQuestList.value = [...markChainQuestList.value, ...chainedQuestList, ...props.chainedItemGlobal.chainedGlobalMarkQuestItem.value]
+      markChainQuestList.value = [...markChainQuestList.value, ...chainedQuestList]
         .filter((val, index, self) => self.indexOf(val) === index)
         .filter(val => val !== questId);
+    } else {
+      markChainQuestList.value = markChainQuestList.value.filter((key) => props.chainedItemGlobal.chainedGlobalMarkQuestItem.value.includes(key));
     }
   } else {
     markChainQuestList.value = markChainQuestList.value.filter(val => !chainedQuestList.includes(val));

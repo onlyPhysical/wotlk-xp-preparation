@@ -50,7 +50,8 @@ const props = defineProps<{
   xp: Xp;
   quest: Quest;
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
-  chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuest: Ref<string[]> };
+  chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuest: Ref<string[]> }; // TODO remove maybe
+  markChainQuestList: string[];
   disableQuestList: string[];
 }>();
 const emit = defineEmits<{
@@ -59,10 +60,17 @@ const emit = defineEmits<{
 
 const checkForCompetedMsg: Ref<string> = ref('Check if you have completed this quest');
 const checked = ref(false);
+const questChainTooltipMsg = 'This quest is part of a quest series, you can have only one quest in your Quest Log from a particular chain!';
 let chainedQuestList: string[] = [];
 
 watch([props.factionFilter.faction, props.factionFilter.repFaction], (newProps) => {
   if (newProps) {
+    checked.value = false;
+  }
+});
+
+watch(props, (newProps) => {
+  if (newProps.markChainQuestList.includes(props.xp.id)) {
     checked.value = false;
   }
 });
@@ -95,7 +103,13 @@ const getQuestReturnZone: ComputedRef<string> = computed(() => {
   return '';
 });
 const getQuestChain: ComputedRef<boolean> = computed(() => (props.quest.exclusiveTo || props.quest.preQuestSingle || props.quest.nextQuestInChain || props.quest.preQuestGroup) ? true : false);
-const getMarkQuest: ComputedRef<boolean> = computed(() => props.chainedGlobal.chainedGlobalMarkQuest.value.includes(props.xp.id));
+const getMarkQuest: ComputedRef<boolean> = computed(() => {
+  if(!checked.value) {
+    return props.markChainQuestList.includes(props.xp.id);
+  } else {
+    return false;
+  }
+});
 const getDisableQuest: ComputedRef<boolean> = computed(() => props.disableQuestList.includes(props.xp.id));
 
 const getPreQuestSingle = (quest: string) => {
@@ -189,7 +203,7 @@ const checkForCompletedButtonOut = (): void => {
         <span v-if="getQuestRequiredRaces" class="quest-race-image"><img :src="`../../public/images/${getQuestRequiredRaces}-banner.webp`"></span>
         <span v-if="getQuestRequiredClass">{{ getQuestRequiredClass }}</span>
         <span v-if="getQuestRequiredSkill" class="quest-skill-image"><img :src="`../../public/images/${getQuestRequiredSkill}.webp`"></span>
-        <span v-if="getQuestChain" class="quest-chain-image"></span>
+        <span v-if="getQuestChain" class="quest-chain-image" :content="questChainTooltipMsg" v-tippy></span>
       </div>
       <span class="quest-zone-return">{{ getQuestReturnZone }}</span>
     </div>

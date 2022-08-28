@@ -74,7 +74,6 @@ watch([props.factionFilter.faction, props.factionFilter.repFaction], (newProps) 
   if (newProps) {
     questItemListResult.value = JSON.parse(JSON.stringify(questItemList));
     xpListResultFilter();
-    // TODO when changing factions
   }
 });
 
@@ -84,6 +83,17 @@ watch([props.chainedGlobal.chainedGlobalQuestId, props.chainedGlobal.chainedGlob
       disableQuestList.value = [...disableQuestList.value, props.chainedGlobal.chainedGlobalQuestId.value];
     } else {
       disableQuestList.value = disableQuestList.value.filter((key) => ![props.chainedGlobal.chainedGlobalQuestId.value].includes(key));
+    }
+  }
+});
+
+watch(props.chainedGlobal.chainedGlobalMarkQuest, (newProps) => {
+  if (newProps) {
+    if (props.chainedGlobal.chainedGlobalQuestChecked.value) {
+      markChainQuestList.value = [...markChainQuestList.value, ...props.chainedGlobal.chainedGlobalMarkQuest.value]
+        .filter((val, index, self) => self.indexOf(val) === index);
+    } else {
+      markChainQuestList.value = markChainQuestList.value.filter((key) => props.chainedGlobal.chainedGlobalMarkQuest.value.includes(key));
     }
   }
 });
@@ -128,7 +138,7 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
     };
     questItemListSelected.value = quest;
     if (chainedQuestList.length) {
-      markChainQuestList.value = [...markChainQuestList.value, ...chainedQuestList, ...props.chainedGlobal.chainedGlobalMarkQuest.value]
+      markChainQuestList.value = [...markChainQuestList.value, ...chainedQuestList]
         .filter((val, index, self) => self.indexOf(val) === index)
         .filter(val => val !== questId);
     }
@@ -153,6 +163,7 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
       :xp="xp"
       :quest="questItemList[xp.id as keyof object]"
       :factionFilter="factionFilter"
+      :markChainQuestList="markChainQuestList"
       :chainedGlobal="chainedGlobal"
       :disableQuestList="disableQuestList"
       :key="xp.id" />

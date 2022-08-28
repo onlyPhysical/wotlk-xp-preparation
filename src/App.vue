@@ -12,7 +12,9 @@ const xpToLevel = {
   71: { xp: 1539600 }
 }
 const MAX_QUEST_IN_LOG = 25;
-const isQuetsLogFull = ref(false);
+const isQuetsLogFull: { full: Ref<boolean> } = { 
+  full: ref(false)
+}
 const faction = ref('');
 const repFaction = ref('');
 const factionFilter: { faction: Ref<number>, repFaction: Ref<number> } = {
@@ -81,11 +83,15 @@ const addQuest = (questId: string, questListSelected: { questId: string, questXp
   chainedGlobal.chainedGlobalQuestChecked.value = checked;
   chainedGlobal.chainedGlobalMarkQuest.value = markQuest;
   if (checked) {
+    chainedGlobal.chainedGlobalMarkQuest.value = markQuest;
+    if (markQuest.length) {
+      selectedQuestList.value = selectedQuestList.value.filter((key) => !markQuest.includes(key.questId));
+    }
     selectedQuestList.value = [...selectedQuestList.value, questListSelected];
   } else {
     selectedQuestList.value = selectedQuestList.value.filter((key) => key.questId !== questId);
   }
-  isQuetsLogFull.value = selectedQuestList.value.length === MAX_QUEST_IN_LOG ? true : false;
+  isQuetsLogFull.full.value = selectedQuestList.value.length === MAX_QUEST_IN_LOG ? true : false;
 }
 
 const addQuestItem = (questId: string, questListSelected: { questId: string, questXp: number, questName: string, zone: string }, checked: boolean, markQuest: string[]): void => {
@@ -93,6 +99,10 @@ const addQuestItem = (questId: string, questListSelected: { questId: string, que
   chainedItemGlobal.chainedGlobalQuestChecked.value = checked;
   chainedItemGlobal.chainedGlobalMarkQuestItem.value = markQuest;
   if (checked) {
+    chainedItemGlobal.chainedGlobalMarkQuestItem.value = markQuest;
+    if (markQuest.length) {
+      selectedQuestList.value = selectedQuestList.value.filter((key) => !markQuest.includes(key.questId));
+    }
     selectedQuestList.value = [...selectedQuestList.value, questListSelected];
   } else {
     selectedQuestList.value = selectedQuestList.value.filter((key) => key.questId !== questId);

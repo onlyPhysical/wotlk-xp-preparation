@@ -52,7 +52,7 @@ const props = defineProps<{
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
   markChainQuestList: string[];
   disableQuestItemList: string[];
-  isQuetsLogFull: boolean;
+  isQuetsLogFull: { full: Ref<boolean> };
 }>();
 const emit = defineEmits<{
   (e: 'check', questId: string, questXp: number, questName: string, zone: string, checked: boolean, chainedQuestList: string[]): void;
@@ -61,6 +61,7 @@ const emit = defineEmits<{
 const checkForCompetedMsg: Ref<string> = ref('Check if you have completed this quest');
 const checked = ref(false);
 const isQuetsLogFull = ref(false);
+const questChainTooltipMsg = 'This quest is part of a quest series, you can have only one quest in your Quest Log from a particular chain!';
 let chainedQuestList: string[] = [];
 
 watch([props.factionFilter.faction, props.factionFilter.repFaction], (newProps) => {
@@ -69,16 +70,14 @@ watch([props.factionFilter.faction, props.factionFilter.repFaction], (newProps) 
   }
 });
 
-watch(props.markChainQuestList, (newProps) => {
-  if (newProps.includes(props.xp.id)) {
+watch(props, (newProps) => {
+  if (newProps.markChainQuestList.includes(props.xp.id)) {
     checked.value = false;
   }
 });
 
-watch(props, (newProps) => {
-  if (newProps) {
-    isQuetsLogFull.value = checked.value === false ? props.isQuetsLogFull : false;
-  }
+watch(props.isQuetsLogFull.full, (newProps) => {
+  isQuetsLogFull.value = checked.value === false ? newProps : false;
 });
 
 const getQuestDifficultyClass: ComputedRef<string> = computed(() => {
@@ -203,7 +202,7 @@ const checkForCompletedButtonOut = (): void => {
         <span v-if="getQuestRequiredRaces" class="quest-race-image"><img :src="`../../public/images/${getQuestRequiredRaces}-banner.webp`"></span>
         <span v-if="getQuestRequiredClass">{{ getQuestRequiredClass }}</span>
         <span v-if="getQuestRequiredSkill" class="quest-skill-image"><img :src="`../../public/images/${getQuestRequiredSkill}.webp`"></span>
-        <span v-if="getQuestChain" class="quest-chain-image" content="This quest is part of a quest series, you can have only one quest in your Quest Log from a particular chain!" v-tippy></span>
+        <span v-if="getQuestChain" class="quest-chain-image" :content="questChainTooltipMsg" v-tippy></span>
       </div>
       <span class="quest-zone-return">{{ getQuestReturnZone }}</span>
     </div>
