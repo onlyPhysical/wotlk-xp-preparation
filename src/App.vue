@@ -121,7 +121,9 @@ const reset = (): void =>  {
 <template>
   <header>
     <div class="wrapper">
-      <h1>WOTLK classic XP preparation</h1>
+      <img src="./../public/images/achievement-level-80.webp" width="64" height="64" alt="achievement level 80">
+      <h1>WOTLK classic quest XP preparation</h1>
+      <p>A small web tool to help you prepare with quests for a better start on Wrath launch</p>
     </div>
   </header>
   <div class="landing-block">
@@ -163,6 +165,10 @@ const reset = (): void =>  {
     </div>
     <div class="main-block-wrapper">
       <div class="main-block">
+        <p>List of TBC quests sorted by xp value, which you can complete beforehand and turn in WOTLK.</p>
+        <p>You can save up to 25 quests in your quest log.</p>
+        <p><br></p>
+        <p>Quest limit: {{ 0 }}</p>
         <QuestList 
         @check="addQuest"
         :factionFilter="factionFilter"
@@ -170,12 +176,15 @@ const reset = (): void =>  {
         :isQuetsLogFull="isQuetsLogFull" />
       </div>
       <div class="main-block">
+        <p>This section contains quests, that start from an item or quests with collectable item(you can loot them before accepting the quest).</p>
+        <p>You can keep the items in your inventory, accept and turn in at launch day.</p>
         <QuestItemList
           @check="addQuestItem"
           :factionFilter="factionFilter"
           :chainedGlobal="chainedGlobal" />
       </div>
       <div class="main-block">
+        <p>List of selected quests</p>
         <li v-for="selectedQuest in selectedQuestList" class="quest-row selected-quest-row">
           <span class="quest-xp">{{ selectedQuest.questXp }}</span>
           <a 
@@ -197,6 +206,7 @@ const reset = (): void =>  {
   font-weight: normal;
 }
 header {
+  padding-top: 20px;
   line-height: 1.5;
 }
 .logo {
@@ -207,6 +217,9 @@ a {
   text-decoration: none;
   color: var(--color-text);
   transition: 0.4s;
+}
+p {
+  font-size: 17px;
 }
 #app {
   display: grid;
@@ -220,7 +233,8 @@ header {
 }
 header .wrapper {
   display: flex;
-  place-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   flex-wrap: wrap;
 }
 .logo {
@@ -232,7 +246,7 @@ header .wrapper {
 }
 .faction-block-wrapper {
   display: flex;
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 .faction-block {
   display: flex;
@@ -248,8 +262,8 @@ header .wrapper {
 }
 .faction-wrap > span {
   box-sizing: content-box;
-  width: 80px;
-  height: 80px;
+  width: 66px;
+  height: 66px;
   padding-bottom: 10px;
   margin: 0 10px;
   cursor: pointer;
@@ -257,8 +271,8 @@ header .wrapper {
 }
 .faction-wrap .faction-icon {
   display: block;
-  width: 64px;
-  height: 64px;
+  width: 50px;
+  height: 50px;
   margin: 0 auto;
 }
 .faction-wrap .faction-alliance .faction-icon {
@@ -319,7 +333,9 @@ header .wrapper {
   background: #003f90;
 }
 main {
-  padding: 0 8rem;
+  width: 1534px;
+  margin: 0 auto;
+  padding: 0;
 }
 .main-block-wrapper {
   display: flex;
@@ -327,7 +343,7 @@ main {
   justify-content: space-between;
 }
 .main-block {
-  flex: 0 0 32.5%;
+  flex: 0 0 500px;
   padding: 1rem;
   background-color: #fff;
   border-radius: 5px;
@@ -345,5 +361,15 @@ main {
 }
 .search-quest {
   width: 100%;
+}
+@media only screen and (max-width: 1600px) {
+  main {
+    width: auto;
+    margin: 0;
+    padding: 0 2rem;
+  }
+  .main-block {
+    flex: 0 0 32.5%;
+  }
 }
 </style>
