@@ -50,7 +50,6 @@ const props = defineProps<{
   xp: Xp;
   quest: Quest;
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
-  chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuest: Ref<string[]> }; // TODO remove maybe
   markChainQuestList: string[];
   disableQuestList: string[];
 }>();

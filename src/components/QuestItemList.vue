@@ -164,7 +164,6 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
       :quest="questItemList[xp.id as keyof object]"
       :factionFilter="factionFilter"
       :markChainQuestList="markChainQuestList"
-      :chainedGlobal="chainedGlobal"
       :disableQuestList="disableQuestList"
       :key="xp.id" />
   </ul>
