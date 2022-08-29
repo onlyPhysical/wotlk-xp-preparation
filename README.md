@@ -1,4 +1,4 @@
-#  first-vue-project-ever
+#  Wotlk classic xp preparation
 
 This template should help get you started developing with Vue 3 in Vite.
 
