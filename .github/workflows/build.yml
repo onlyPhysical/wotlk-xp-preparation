@@ -1,4 +1,4 @@
-name: first ever vue project  build
+name: wotlk xp preparation build
 on:
   push:
     branches: [ "main" ]
