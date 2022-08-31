@@ -79,6 +79,7 @@ const getFaction = (selectFaction: string) => {
 }
 
 const addQuest = (questId: string, questListSelected: { questId: string, questXp: number, questName: string, zone: string }, checked: boolean, markQuest: string[]): void => {
+  if (selectedQuestList.value.length > MAX_QUEST_IN_LOG) return;
   chainedGlobal.chainedGlobalQuestId.value = questId;
   chainedGlobal.chainedGlobalQuestChecked.value = checked;
   chainedGlobal.chainedGlobalMarkQuest.value = markQuest;
@@ -168,7 +169,7 @@ const reset = (): void =>  {
         <p>List of TBC quests sorted by xp value, which you can complete beforehand and turn in WOTLK.</p>
         <p>You can save up to 25 quests in your quest log.</p>
         <p><br></p>
-        <p>Quest limit: {{ 0 }}</p>
+        <p>Quest limit: {{ selectedQuestList.length }}</p>
         <QuestList 
         @check="addQuest"
         :factionFilter="factionFilter"
