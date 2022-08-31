@@ -121,7 +121,7 @@ const reset = (): void =>  {
 <template>
   <header>
     <div class="wrapper">
-      <img src="./../public/images/achievement-level-80.webp" width="64" height="64" alt="achievement level 80">
+      <img src="./assets/images/achievement-level-80.webp" width="64" height="64" alt="achievement level 80">
       <h1>WOTLK classic quest XP preparation</h1>
       <p>A small web tool to help you prepare with quests for a better start on Wrath launch</p>
     </div>
@@ -276,28 +276,28 @@ header .wrapper {
   margin: 0 auto;
 }
 .faction-wrap .faction-alliance .faction-icon {
-  background: url("./../public/images/alliance-banner.webp") no-repeat center;
+  background: url("./assets/images/alliance-banner.webp") no-repeat center;
 }
 .faction-wrap .faction-alliance.selected,
 .faction-wrap .faction-alliance:hover {
   border-bottom: solid 3px #201ce0;
 }
 .faction-wrap .faction-horde .faction-icon {
-  background: url("./../public/images/horde-banner.webp") no-repeat center;
+  background: url("./assets/images/horde-banner.webp") no-repeat center;
 }
 .faction-wrap .faction-horde.selected,
 .faction-wrap .faction-horde:hover {
   border-bottom: solid 3px #b00c08;
 }
 .faction-wrap .faction-aldor .faction-icon {
-  background: url("./../public/images/aldor-faction.webp") no-repeat center;
+  background: url("./assets/images/aldor-faction.webp") no-repeat center;
 }
 .faction-wrap .faction-aldor.selected,
 .faction-wrap .faction-aldor:hover {
   border-bottom: solid 3px #648fae;
 }
 .faction-wrap .faction-scryers .faction-icon {
-  background: url("./../public/images/scryers-faction.webp") no-repeat center;
+  background: url("./assets/images/scryers-faction.webp") no-repeat center;
 }
 .faction-wrap .faction-scryers.selected,
 .faction-wrap .faction-scryers:hover {

@@ -174,6 +174,9 @@ const checkForCompletedButtonOut = (): void => {
   checkForCompetedMsg.value = 'Check if you have completed this quest';
 }
 
+const getRaceImageUrl = (raceName: string): string => new URL(`./../assets/images/${raceName}-banner.webp`, import.meta.url).href;
+
+const getSkillsImageUrl = (skillName: string): string => new URL(`./../assets/images/${skillName}.webp`, import.meta.url).href;
 </script>
 <template>
   <li :class="{'quest-row-mark': getMarkQuest}" class="quest-row">
@@ -199,9 +202,9 @@ const checkForCompletedButtonOut = (): void => {
     <div class="quest-second-row">
       <div>
         <span v-if="getQuestRequiredLevel > 0">{{ getQuestRequiredLevel }}</span>
-        <span v-if="getQuestRequiredRaces" class="quest-race-image"><img :src="`../../public/images/${getQuestRequiredRaces}-banner.webp`"></span>
+        <span v-if="getQuestRequiredRaces" class="quest-race-image"><img :src="getRaceImageUrl(getQuestRequiredRaces)"></span>
         <span v-if="getQuestRequiredClass">{{ getQuestRequiredClass }}</span>
-        <span v-if="getQuestRequiredSkill" class="quest-skill-image"><img :src="`../../public/images/${getQuestRequiredSkill}.webp`"></span>
+        <span v-if="getQuestRequiredSkill" class="quest-skill-image"><img :src="getSkillsImageUrl(getQuestRequiredSkill)"></span>
         <span v-if="getQuestChain" class="quest-chain-image" :content="questChainTooltipMsg" v-tippy></span>
       </div>
       <span class="quest-zone-return">{{ getQuestReturnZone }}</span>
