@@ -4,7 +4,7 @@ import type { Ref, ComputedRef } from "vue";
 import questList from "../../public/data/questData.json";
 import npcZoneList from "../../public/data/npcZoneData.json";
 import objectZoneList from "../../public/data/objectZoneData.json";
-import { raceKeys, skillKeys, zoneIDs } from "../../public/utils/const";
+import { raceKeys, skillKeys, zoneIDs, itemKeys } from "../../public/utils/const";
 
 interface Xp {
   id: string;
@@ -110,6 +110,23 @@ const getMarkQuest: ComputedRef<boolean> = computed(() => {
   }
 });
 const getDisableQuest: ComputedRef<boolean> = computed(() => props.disableQuestList.includes(props.xp.id));
+const getQuestItem: ComputedRef<string> = computed(() => {
+  if (props.quest.startedBy!['3' as keyof object]) {
+    return props.quest.startedBy!['3' as keyof object]['1'];
+  } else if (props.quest.objectives!['3' as keyof object]) {
+    return props.quest.objectives!['3' as keyof object]['1']['1'];
+  }
+  return '';
+});
+
+const getQuestItemName: ComputedRef<string> = computed(() => {
+  if (props.quest.startedBy!['3' as keyof object]) {
+    return itemKeys[props.quest.startedBy!['3' as keyof object]['1']];
+  } else if (props.quest.objectives!['3' as keyof object]) {
+    return itemKeys[props.quest.objectives!['3' as keyof object]['1']['1']];
+  }
+  return '';
+});
 
 const getPreQuestSingle = (quest: string) => {
   if (questList[quest as keyof object]['preQuestSingle']) {
@@ -177,6 +194,7 @@ const checkForCompletedButtonOut = (): void => {
 const getRaceImageUrl = (raceName: string): string => new URL(`./../assets/images/${raceName}-banner.webp`, import.meta.url).href;
 
 const getSkillsImageUrl = (skillName: string): string => new URL(`./../assets/images/${skillName}.webp`, import.meta.url).href;
+
 </script>
 <template>
   <li :class="{'quest-row-mark': getMarkQuest}" class="quest-row">
@@ -189,7 +207,6 @@ const getSkillsImageUrl = (skillName: string): string => new URL(`./../assets/im
       <span :class="getQuestDifficultyClass" class="quest-xp">{{ xp.xp }}</span>
       <a 
         :href="`https://www.wowhead.com/wotlk/quest=${xp.id}`"
-        :data-wowhead="`quest=${xp.id}`"
         target="_blank"
         class="quest-name">{{ quest.name }}</a>
       <button 
@@ -206,6 +223,13 @@ const getSkillsImageUrl = (skillName: string): string => new URL(`./../assets/im
         <span v-if="getQuestRequiredClass">{{ getQuestRequiredClass }}</span>
         <span v-if="getQuestRequiredSkill" class="quest-skill-image"><img :src="getSkillsImageUrl(getQuestRequiredSkill)"></span>
         <span v-if="getQuestChain" class="quest-chain-image" :content="questChainTooltipMsg" v-tippy></span>
+        <a 
+          v-if="getQuestItem"
+          :href="`https://www.wowhead.com/wotlk/item=${getQuestItem}`"
+          target="_blank"
+          content="Quest item"
+          v-tippy
+          class="quest-item">{{ getQuestItemName }}</a>
       </div>
       <span class="quest-zone-return">{{ getQuestReturnZone }}</span>
     </div>

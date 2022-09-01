@@ -177,6 +177,7 @@ const checkForCompletedButtonOut = (): void => {
 const getRaceImageUrl = (raceName: string): string => new URL(`./../assets/images/${raceName}-banner.webp`, import.meta.url).href;
 
 const getSkillsImageUrl = (skillName: string): string => new URL(`./../assets/images/${skillName}.webp`, import.meta.url).href;
+
 </script>
 <template>
   <li :class="{'quest-row-mark': getMarkQuest}" class="quest-row">
@@ -189,7 +190,6 @@ const getSkillsImageUrl = (skillName: string): string => new URL(`./../assets/im
       <span :class="getQuestDifficultyClass" class="quest-xp">{{ xp.xp }}</span>
       <a 
         :href="`https://www.wowhead.com/wotlk/quest=${xp.id}`"
-        :data-wowhead="`quest=${xp.id}`"
         target="_blank"
         class="quest-name">{{ quest.name }}</a>
       <button 
