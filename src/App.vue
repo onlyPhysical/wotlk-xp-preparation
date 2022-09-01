@@ -175,6 +175,7 @@ const reset = (): void =>  {
         @check="addQuest"
         :factionFilter="factionFilter"
         :chainedItemGlobal="chainedItemGlobal"
+        :selectedQuestList="selectedQuestList"
         :isQuetsLogFull="isQuetsLogFull" />
       </div>
       <div class="main-block">
@@ -183,7 +184,8 @@ const reset = (): void =>  {
         <QuestItemList
           @check="addQuestItem"
           :factionFilter="factionFilter"
-          :chainedGlobal="chainedGlobal" />
+          :chainedGlobal="chainedGlobal"
+          :selectedQuestList="selectedQuestList" />
       </div>
       <div class="main-block">
         <p>List of selected quests</p>
