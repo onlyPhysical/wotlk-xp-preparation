@@ -49,6 +49,7 @@ interface Quest {
 const props = defineProps<{
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
   chainedGlobal: { chainedGlobalQuestId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuest: Ref<string[]> };
+  selectedQuestList: Array<{ questId: string, questXp: number, questName: string, zone: string }>;
 }>();
 const emit = defineEmits<{
   (e: 'check', questId: string, questListSelected: { questId: string, questXp: number, questName: string, zone: string }, checked: boolean, markChainQuestItemList: string[]): void;
@@ -163,6 +164,7 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
       :factionFilter="factionFilter"
       :markChainQuestList="markChainQuestList"
       :disableQuestList="disableQuestList"
+      :selectedQuestList="selectedQuestList"
       :key="xp.id" />
   </ul>
 </template>

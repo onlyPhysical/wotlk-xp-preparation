@@ -59,7 +59,7 @@ h3 {
   border-radius: 3px;
 }
 .quest-row.selected-quest-row {
-  line-height: 16px;
+  line-height: 18px;
   background-color: var(--color-background);
 }
 .quest-row-mark {
@@ -143,9 +143,12 @@ h3 {
 .quest-second-row .quest-zone-return {
   margin-right: 0;
 }
+.selected-quest-row .quest-name {
+  width: 240px;
+}
 .selected-quest-row .quest-zone-return {
   float: right;
-  line-height: 24px;
+  line-height: 28px;
 }
 .button {
   height: 28px;

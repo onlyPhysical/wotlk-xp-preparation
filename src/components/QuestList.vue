@@ -17,6 +17,7 @@ interface Xp {
 const props = defineProps<{
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
   chainedItemGlobal: { chainedGlobalQuestItemId: Ref<string>, chainedGlobalQuestChecked: Ref<boolean>, chainedGlobalMarkQuestItem: Ref<string[]> };
+  selectedQuestList: Array<{ questId: string, questXp: number, questName: string, zone: string }>;
   isQuetsLogFull: { full: Ref<boolean> };
 }>();
 const emit = defineEmits<{
@@ -146,6 +147,7 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
       :factionFilter="factionFilter"
       :markChainQuestList="markChainQuestList"
       :disableQuestItemList="disableQuestItemList"
+      :selectedQuestList="selectedQuestList"
       :isQuetsLogFull="isQuetsLogFull"
       :key="xp.id" />
   </ul>

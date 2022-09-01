@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import type { Ref, ComputedRef } from "vue";
 import questList from "../../public/data/questData.json";
 import npcZoneList from "../../public/data/npcZoneData.json";
@@ -52,6 +52,7 @@ const props = defineProps<{
   factionFilter: { faction: Ref<number>, repFaction: Ref<number> };
   markChainQuestList: string[];
   disableQuestItemList: string[];
+  selectedQuestList: Array<{ questId: string, questXp: number, questName: string, zone: string }>;
   isQuetsLogFull: { full: Ref<boolean> };
 }>();
 const emit = defineEmits<{
@@ -63,6 +64,14 @@ const checked = ref(false);
 const isQuetsLogFull = ref(false);
 const questChainTooltipMsg = 'This quest is part of a quest series, you can have only one quest in your Quest Log from a particular chain!';
 let chainedQuestList: string[] = [];
+
+onMounted(() => {
+  if (props.selectedQuestList.length) {
+    if (props.selectedQuestList.map((key) => key.questId).includes(props.xp.id)) {
+      checked.value = true;
+    }
+  }
+})
 
 watch([props.factionFilter.faction, props.factionFilter.repFaction], (newProps) => {
   if (newProps) {
