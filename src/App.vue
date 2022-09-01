@@ -117,6 +117,7 @@ const reset = (): void =>  {
   repFaction.value = '';
   selectedQuestList.value = [];
 }
+
 </script>
 
 <template>
