@@ -163,7 +163,7 @@ const reset = (): void =>  {
       <button @click="reset()" :disabled="disableResetButton" class="reset-button button">Reset</button>
       <p>Total XP {{ getTotalQuestXp }}</p>
       <div class="quests-xp-bar"><div class="quests-xp-bar-inner" :style="{ width: `${getTotalQuestXpPerLevel}%` }"></div></div>
-      <p>XP {{ (getTotalQuestXp-getTotalQuestXpDiff) }} / {{ getCurrentXpToLevel }} <span>({{ getTotalQuestXpPerLevel }}% to level {{ getCurrentLevel }})</span></p>
+      <p>XP {{ (getTotalQuestXp-getTotalQuestXpDiff) }} / {{ getCurrentXpToLevel }} <span>({{ getTotalQuestXpPerLevel }}% to level {{ getCurrentLevel + 1 }})</span></p>
     </div>
     <div class="main-block-wrapper">
       <div class="main-block">
