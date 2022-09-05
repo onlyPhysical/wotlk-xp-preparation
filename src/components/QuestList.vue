@@ -125,7 +125,9 @@ const checkQuest = (questId: string, questXp: number, questName: string, zone: s
         .filter((val, index, self) => self.indexOf(val) === index)
         .filter(val => val !== questId);
     } else {
-      markChainQuestList.value = markChainQuestList.value.filter((key) => props.chainedItemGlobal.chainedGlobalMarkQuestItem.value.includes(key));
+      if (props.chainedItemGlobal.chainedGlobalMarkQuestItem.value.length) {
+        markChainQuestList.value = markChainQuestList.value.filter((key) => props.chainedItemGlobal.chainedGlobalMarkQuestItem.value.includes(key));
+      }
     }
   } else {
     markChainQuestList.value = markChainQuestList.value.filter(val => !chainedQuestList.includes(val));
