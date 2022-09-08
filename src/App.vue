@@ -6,6 +6,7 @@ import QuestList from "./components/QuestList.vue";
 import QuestItemList from "./components/QuestItemList.vue";
 
 const selectedQuestList: Ref<Array<{ questId: string, questXp: number, questName: string, zone: string }>> = ref([]);
+const selectedQuestItemList: Ref<Array<{ questId: string, questXp: number, questName: string, zone: string }>> = ref([]);
 const initLevel = 70;
 const xpToLevel = { 
   70: { xp: 1523800 },
@@ -35,8 +36,8 @@ const chainedItemGlobal: { chainedGlobalQuestItemId: Ref<string>, chainedGlobalQ
 const factionFilterLength: ComputedRef<boolean> = computed(() => factionFilter.faction.value !== 0 && factionFilter.repFaction.value !== 0);
 const getTotalQuestXp: ComputedRef<number> = computed(() => {
   const init = 0;
-  if (selectedQuestList.value.length) {
-    return selectedQuestList.value.reduce(
+  if (selectedQuestListAll.value.length) {
+    return selectedQuestListAll.value.reduce(
       (prev, next) => prev as number + next.questXp, init
     );
   } else {
@@ -53,11 +54,13 @@ const getTotalQuestXpPerLevel: ComputedRef<number> = computed(() => {
 });
 const getCurrentLevel: ComputedRef<number> = computed(() => getTotalQuestXp.value > xpToLevel[initLevel]['xp'] ? 71 : 70);
 const getTotalQuestXpDiff: ComputedRef<number> = computed(() => getTotalQuestXp.value > xpToLevel[initLevel]['xp'] ? xpToLevel[initLevel]['xp'] : 0);
-const disableResetButton: ComputedRef<boolean> = computed(() => selectedQuestList.value.length ? false : true );
+const disableResetButton: ComputedRef<boolean> = computed(() => selectedQuestListAll.value.length ? false : true );
+const selectedQuestListAll: ComputedRef<Array<{ questId: string, questXp: number, questName: string, zone: string }>> = computed(() => [...selectedQuestList.value, ...selectedQuestItemList.value]);
 
 const getFaction = (selectFaction: string) => {
   if (faction.value === selectFaction) return;
   selectedQuestList.value = [];
+  selectedQuestItemList.value = [];
   switch (selectFaction) {
     case 'alliance':
       factionFilter.faction.value = 690; // when selecting alliance we are actually filtering by horde
@@ -102,11 +105,11 @@ const addQuestItem = (questId: string, questListSelected: { questId: string, que
   if (checked) {
     chainedItemGlobal.chainedGlobalMarkQuestItem.value = markQuest;
     if (markQuest.length) {
-      selectedQuestList.value = selectedQuestList.value.filter((key) => !markQuest.includes(key.questId));
+      selectedQuestItemList.value = selectedQuestItemList.value.filter((key) => !markQuest.includes(key.questId));
     }
-    selectedQuestList.value = [...selectedQuestList.value, questListSelected];
+    selectedQuestItemList.value = [...selectedQuestItemList.value, questListSelected];
   } else {
-    selectedQuestList.value = selectedQuestList.value.filter((key) => key.questId !== questId);
+    selectedQuestItemList.value = selectedQuestItemList.value.filter((key) => key.questId !== questId);
   }
 }
 
@@ -116,6 +119,7 @@ const reset = (): void =>  {
   faction.value = '';
   repFaction.value = '';
   selectedQuestList.value = [];
+  selectedQuestItemList.value = [];
 }
 
 </script>
@@ -188,8 +192,11 @@ const reset = (): void =>  {
           :selectedQuestList="selectedQuestList" />
       </div>
       <div class="main-block">
-        <p>List of selected quests</p>
-        <li v-for="selectedQuest in selectedQuestList" class="quest-row selected-quest-row">
+        <p>List of selected quests ({{ selectedQuestListAll.length }})</p>
+        <li 
+          v-for="selectedQuest in selectedQuestListAll"
+          :key="selectedQuest.questId"
+          class="quest-row selected-quest-row">
           <span class="quest-xp">{{ selectedQuest.questXp }}</span>
           <a 
             :href="`https://www.wowhead.com/wotlk/quest=${selectedQuest.questId}`"
